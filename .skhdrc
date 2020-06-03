@@ -39,7 +39,7 @@ shift + alt - 4 : yabai -m window --space 4
 shift + alt - 5 : yabai -m window --space 5
 shift + alt - 6 : yabai -m window --space 6
 
-
+# Commands for opening applications
 alt - return : open -a iTerm --new
 shift + alt - return : open -a Google\ Chrome --new
 alt - e : emacs

@@ -27,10 +27,21 @@
 (map! :leader
       :desc "Treemacs" :n "p t" #'treemacs)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Frame management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-key! +doom-dashboard-mode-map "C-n" nil)
+(define-key! evil-normal-state-map "C-n" nil)
+(map! :g "C-n" #'display-buffer-other-frame)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (map! :leader
+      :desc "Open +bindings file" :g "h B"
+      (lambda () (interactive) (find-file "~/.doom.d/+bindings.el"))
+
       :desc "Open .zshrc file" :g "h z"
       (lambda () (interactive) (find-file "~/.zshrc")))
 
@@ -38,7 +49,6 @@
       :desc "Raise (promote) popup to buffer" :g "w r" #'+popup/raise
       :desc "Lower (demote) buffer to popup" :g "w R" #'+popup/buffer
       :desc "Toggle popup" :g "`" #'+popup/toggle)
-
 
 (map!
  ;;:n "[S-return]" #'newline-and-indent
