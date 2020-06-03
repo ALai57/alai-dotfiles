@@ -1,0 +1,52 @@
+! Typeface: JetBrains Mono
+#define typeface_bar_glyph_extended  all-the-icons 30
+#define typeface_bar_glyph  JetBrains Mono Medium 30
+#define typeface_wm         pango:JetBrains Mono Medium 13
+#define typeface_bar        pango:JetBrains Mono Medium 30, Material Design Icons 30
+#define typeface_rofi       JetBrains Mono Medium 16
+#define typeface_terminal   JetBrains Mono:pixelsize=16:antialias=true:autohint=true
+#define typeface_gnome_terminal JetBrains Mono 13
+
+#define typeface_bar_glyph_wifi 
+#define typeface_bar_glyph_wired 
+#define typeface_bar_glyph_up 
+#define typeface_bar_glyph_dn 
+#define typeface_bar_glyph_cpu 
+#define typeface_bar_glyph_battery_100 
+#define typeface_bar_glyph_battery_80 
+#define typeface_bar_glyph_battery_50 
+#define typeface_bar_glyph_battery_20 
+#define typeface_bar_glyph_battery_0 
+#define typeface_bar_glyph_battery_charging 
+#define typeface_bar_glyph_battery_ac 
+#define typeface_bar_glyph_battery_unknown 
+#define typeface_bar_glyph_time 
+#define typeface_bar_glyph_workspace 
+#define typeface_bar_glyph_disk 
+
+#define typeface_bar_glyph_media_playing 
+#define typeface_bar_glyph_media_paused 
+
+#define typeface_bar_glyph_notify_none 
+#define typeface_bar_glyph_notify_some 
+#define typeface_bar_glyph_notify_error 
+#define typeface_bar_glyph_help 
+#define typeface_bar_glyph_thermometer 
+#define typeface_bar_glyph_sound 
+#define typeface_bar_glyph_mute 
+#define typeface_bar_glyph_memory R
+
+#define typeface_bar_glyph_on 
+#define typeface_bar_glyph_off 
+
+#define typeface_bar_glyph_numlock N
+#define typeface_bar_glyph_capslock C
+
+#define typeface_bar_glyph_error 
+
+#define typeface_bar_glyph_home 
+#define typeface_bar_glyph_email 
+#define typeface_bar_glyph_clojure 
+#define typeface_bar_glyph_slack 
+#define typeface_bar_glyph_news 
+#define typeface_bar_glyph_music 

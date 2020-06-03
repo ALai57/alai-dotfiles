@@ -1,0 +1,11 @@
+#define gtk_theme           Material-Black-Lime-3.36
+#define icon_theme          MB-Lime-Suru-GLOW
+#define desktop_wallpaper   /usr/share/backgrounds/warty-final-ubuntu.png
+#define rofi_theme          /home/andrew/.config/regolith/styles/alai/rofi.rasi
+#define theme_terminal_scrollbar never
+
+#define i3wm_window_border_size         10
+#define i3wm_floatingwindow_border_size 5
+#define i3wm_gaps_inner_size            5
+#define i3wm_gaps_outer_size            5
+#define i3wm_bar_position               top
