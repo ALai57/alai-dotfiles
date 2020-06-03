@@ -1,0 +1,16 @@
+! -- Styles - Colors
+#include "/home/andrew/.config/regolith/styles/alai/color"
+
+! -- Styles - Fonts
+#include "/home/andrew/.config/regolith/styles/alai/typeface"
+
+! -- Styles - Theme
+#include "/home/andrew/.config/regolith/styles/alai/theme"
+
+! -- Applications
+! These files map values defined above into specific app settings.
+#include "/etc/regolith/styles/st-term"
+#include "/home/andrew/.config/regolith/styles/alai/i3-wm"
+#include "/home/andrew/.config/regolith/styles/alai/i3xrocks"
+#include "/etc/regolith/styles/rofi"
+#include "/etc/regolith/styles/gnome"
