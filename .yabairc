@@ -50,6 +50,9 @@ set frequency 300
 killall limelight &> /dev/null
 limelight &> /dev/null &
 
+killall spacebar &> /dev/null
+spacebar &> /dev/null &
+
 # Custom rules
 #yabai -m rule --add app=Emacs manage=on space=2
 yabai -m rule --add label=emacs app=Emacs manage=on
