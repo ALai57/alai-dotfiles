@@ -50,4 +50,4 @@ i3xrocks.label.numlock: typeface_bar_glyph_numlock
 
 i3xrocks.weather.error_message: typeface_bar_glyph_error
 
-i3xrocks.date.format: + %y-%m-%d %I:%M
+i3xrocks.date.format2: + %Y-%m-%d %I:%M
