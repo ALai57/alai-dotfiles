@@ -1,5 +1,5 @@
-#define gtk_theme           Material-Black-Lime-3.36
-#define icon_theme          MB-Lime-Suru-GLOW
+#define gtk_theme           Material-Black-Plum-3.36
+#define icon_theme          MB-Plum-Suru-GLOW
 #define desktop_wallpaper   /usr/share/backgrounds/warty-final-ubuntu.png
 #define rofi_theme          /home/andrew/.config/regolith/styles/alai/rofi.rasi
 #define theme_terminal_scrollbar never
