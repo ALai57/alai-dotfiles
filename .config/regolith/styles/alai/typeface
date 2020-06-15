@@ -50,3 +50,5 @@
 #define typeface_bar_glyph_slack 
 #define typeface_bar_glyph_news 
 #define typeface_bar_glyph_music 
+#define typeface_bar_glyph_cog 
+#define typeface_bar_glyph_computer 

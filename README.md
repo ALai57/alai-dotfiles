@@ -9,7 +9,7 @@
 # On Linux:
 - Regolith
 - Requires all-the-icons.el from Emacs
-- gtk theme Material-Black themes/icons from `https://github.com/rtlewis88/rtl88-Themes/tree/material-black-COLORS`
+- gtk theme Material-Black themes/icons from `https://www.pling.com/p/1333360/` and `https://www.gnome-look.org/p/1316887/` 
 
 ## Customizing regolith top bar
 - for additional customizable icons, use `apt` to install i3xrocks-XXX (temp, weather, etc).
