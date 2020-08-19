@@ -250,9 +250,16 @@
     (context 2)
     (defsystest 1)
     (lz-post-lead 2)
+    (op/p 1)
+    (ac/add-record 1)
+    (prop/for-all 1)
+    (middleware 1)
+    (wrap-response 3)
     (pending 1)
     (route-middleware 1)
     (routes 0)))
+
+(setq clojure-indent-style 'align-arguments)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java
