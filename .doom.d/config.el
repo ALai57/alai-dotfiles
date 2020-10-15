@@ -265,4 +265,4 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load! "+bindings")
 (load! "+treemacs")
-;;(load! "fourclojure")
+(load! "lisp/fourclojure")
