@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+workspace_number=$1
+
+if [ -z "$workspace_number" ]
+then
+	echo "Enter workspace number: "
+	read workspace_number
+else 
+	echo $workspace_number
+fi
+
+i3-msg workspace $workspace_number
+
+
+cwd=$(pwd)
+cd ~/opp/loanarranger
+firefox --new-window https://opploans.atlassian.net/secure/RapidBoard.jspa?rapidView=25&projectKey=BW
+if [ -z "$(pgrep emacs)" ] 
+then
+	echo "Launching Emacs Daemon"
+	emacs --daemon
+fi
+emacsclient -c ~/opp/loanarranger/project.clj &
+emacsclient -c ~/opp/loanarranger/src/loan_arranger/handler.clj &
+emacsclient --eval '(cider-jack-in-clj (list "repl" :headless :host "localhost"))' &
+gnome-terminal --window --command ranger
+cd $cwd
