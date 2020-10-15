@@ -16,3 +16,6 @@ cp --symbolic-link [doom-config/*] ~/.doom.d/
 
 # Useful commands
 alias dr='~/.emacs.d/bin/doom sync'
+
+# Installing local packages (e.g. for development)
+symlink the package into the `local-packages` directory and add it to config.el
