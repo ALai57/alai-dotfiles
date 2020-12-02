@@ -23,7 +23,7 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "monospace" :size 20))
+(setq doom-font (font-spec :family "monospace" :size 16))
 (setq org-directory "~/org/")       ;; MUST BE SET BEFORE ORG LOADS
 (setq display-line-numbers-type t)
 
@@ -214,7 +214,21 @@
  '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
  '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
- '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
+ '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+
+'(ediff-current-diff-A ((t (:background "#46382c"))))
+'(ediff-current-diff-B ((t (:background "#343d32"))))
+'(ediff-current-diff-C ((t (:background "#313939"))))
+'(ediff-fine-diff-A ((t (:background "#66584c"))))
+'(ediff-fine-diff-B ((t (:background "#545d52"))))
+'(ediff-fine-diff-C ((t (:background "#515959"))))
+'(ediff-odd-diff-A ((t (:background "#242424"))))
+'(ediff-odd-diff-B ((t (:background "#242424"))))
+'(ediff-odd-diff-C ((t (:background "#242424"))))
+'(ediff-even-diff-A ((t (:background "#242424"))))
+'(ediff-even-diff-B ((t (:background "#242424"))))
+'(ediff-even-diff-C ((t (:background "#242424"))))
+ )
 
 ;;(use-package color :defer t)
 ;;(set-face-attribute 'org-block nil :background
@@ -247,13 +261,31 @@
     (GET 2)
     (addtest 1)
     (are 1)
+    (are-spec 1)
     (context 2)
     (defsystest 1)
+    (middleware 1)
     (lz-post-lead 2)
     (pending 1)
+    (op/p 1)
+    (wrap-response 3)
     (route-middleware 1)
     (prop/for-all 1)
     (routes 0)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; EDiff
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun update-diff-colors ()
+  "update the colors for diff faces"
+  (set-face-attribute 'diff-added nil
+                      :foreground "white" :background "blue")
+  (set-face-attribute 'diff-removed nil
+                      :foreground "white" :background "red3")
+  (set-face-attribute 'diff-changed nil
+                      :foreground "white" :background "purple"))
+(eval-after-load "diff-mode"
+  '(update-diff-colors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java
