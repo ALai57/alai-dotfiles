@@ -34,6 +34,9 @@
 (define-key! +doom-dashboard-mode-map "C-n" nil)
 (define-key! evil-normal-state-map "C-n" nil)
 (map! :g "C-n" #'display-buffer-other-frame)
+(map! :leader
+      (:when (featurep! :completion ivy)
+       :desc "Find file Other frame" :g "p o" #'projectile-find-file-other-frame))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic
@@ -104,8 +107,9 @@
 
 (defun my-cider-debug-toggle-insert-state ()
   (if cider--debug-mode    ;; Checks if you're entering the debugger
-      (evil-insert-state)  ;; If so, turn on evil-insert-state
-    (evil-normal-state)))  ;; Otherwise, turn on normal-state
+      (evil-normal-state)  ;; Otherwise, turn on normal-state
+    (evil-insert-state)    ;; If so, turn on evil-insert-state
+    ))
 
 (add-hook 'cider--debug-mode-hook 'my-cider-debug-toggle-insert-state)
 (set-popup-rule! "^\\*cider-repl.*?" :size 0.4)
