@@ -330,6 +330,7 @@
   (add-to-list 'aggressive-indent-protected-commands 'undo-fu-only-undo))
 
 (after! clojure-mode
+  (setq clojure-indent-style 'always-align)
   (define-clojure-indent
     (PUT 2)
     (POST 2)
@@ -345,10 +346,29 @@
     (lz-post-lead 2)
     (pending 1)
     (op/p 1)
+    (quick-check 1)
     (wrap-response 3)
     (route-middleware 1)
     (prop/for-all 1)
     (routes 0)))
+
+(defun cider-repl-in-new-frame ()
+  (let ((new-frame (make-frame '((name . "REPL")
+                                 ;;(minibuffer . nil)
+                                 )))
+        (repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
+                      (buffer-list)))))
+    (select-frame-set-input-focus new-frame)
+    (print (frame-first-window new-frame))
+    (switch-to-buffer repl)))
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(cider-repl-pop-to-buffer-on-connect nil)
+ '(cider-connected-hook '(cider-repl-in-new-frame)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
