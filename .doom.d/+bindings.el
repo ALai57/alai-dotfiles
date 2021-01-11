@@ -134,6 +134,9 @@
 (define-key evil-lisp-state-map "w" 'lisp-state-wrap)
 (define-key evil-lisp-state-map "W" 'sp-unwrap-sexp)
 
+(define-key evil-normal-state-map "gof" 'xref-find-definitions-other-frame)
+(define-key evil-normal-state-map "gow" 'xref-find-definitions-other-window)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
