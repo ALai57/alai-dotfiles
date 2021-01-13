@@ -349,7 +349,7 @@
     (quick-check 1)
     (wrap-response 3)
     (route-middleware 1)
-    (prop/for-all 1)
+    (for-all 1)
     (routes 0)))
 
 (defun cider-repl-in-new-frame ()

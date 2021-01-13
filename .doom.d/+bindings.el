@@ -134,8 +134,30 @@
 (define-key evil-lisp-state-map "w" 'lisp-state-wrap)
 (define-key evil-lisp-state-map "W" 'sp-unwrap-sexp)
 
-(define-key evil-normal-state-map "gof" 'xref-find-definitions-other-frame)
-(define-key evil-normal-state-map "gow" 'xref-find-definitions-other-window)
+(dolist (fn '(definition references))
+  (fset (intern (format "+lookup/%s-other-window" fn))
+        (lambda (identifier &optional arg)
+          "TODO"
+          (interactive (list (doom-thing-at-point-or-region)
+                             current-prefix-arg))
+          (let ((pt (point)))
+            (switch-to-buffer-other-window (current-buffer))
+            (goto-char pt)
+            (funcall (intern (format "+lookup/%s" fn)) identifier arg)))))
+
+(dolist (fn '(definition references))
+  (fset (intern (format "+lookup/%s-other-frame" fn))
+        (lambda (identifier &optional arg)
+          "TODO"
+          (interactive (list (doom-thing-at-point-or-region)
+                             current-prefix-arg))
+          (let ((pt (point)))
+            (switch-to-buffer-other-frame (current-buffer))
+            (goto-char pt)
+            (funcall (intern (format "+lookup/%s" fn)) identifier arg)))))
+
+(define-key evil-normal-state-map "gof" '+lookup/definition-other-frame)
+(define-key evil-normal-state-map "gow" '+lookup/definition-other-window)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
