@@ -256,10 +256,38 @@
     (middleware 1)
     (wrap-response 3)
     (pending 1)
+    (reqfn 1)
     (route-middleware 1)
     (routes 0)))
 
 (setq clojure-indent-style 'align-arguments)
+
+(defun cider-repl-in-new-frame ()
+  (let ((new-frame (make-frame '((name . "REPL")
+                                 ;;(minibuffer . nil)
+                                 )))
+        (repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
+                      (buffer-list)))))
+    (select-frame-set-input-focus new-frame)
+    ;;(print (frame-first-window new-frame))
+    (switch-to-buffer repl)))
+
+(setq cider-repl-pop-to-buffer-on-connect nil)
+(setq cider-connected-hook '(cider-repl-in-new-frame))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; EDiff
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun update-diff-colors ()
+  "update the colors for diff faces"
+  (set-face-attribute 'diff-added nil
+                      :foreground "white" :background "blue")
+  (set-face-attribute 'diff-removed nil
+                      :foreground "white" :background "red3")
+  (set-face-attribute 'diff-changed nil
+                      :foreground "white" :background "purple"))
+(eval-after-load "diff-mode"
+  '(update-diff-colors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java
@@ -267,7 +295,17 @@
 (use-package lsp-java :init (add-hook 'java-mode-hook 'lsp))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TLS fix to allow connection to 4clojure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq gnutls-algorithm-priority
+      "SECURE128:+SECURE192:-VERS-ALL:+VERS-TLS1.3:+VERS-TLS1.2:+SIGN-RSA-SHA1")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization layers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(setq display-line-numbers-type nil)
+;;(setq global-linum-mode t)
+
 (load! "+bindings")
 (load! "+treemacs")
+(load! "local-packages/fourclojure.el/fourclojure")

@@ -81,15 +81,15 @@ set_from_resource $rofiTheme rofi.theme /etc/regolith/styles/lascaille/rofi.rasi
 
 ## Launch // Application // <> Space ##
 set_from_resource $i3-wm.program.launcher.app i3-wm.program.launcher.app rofi -show drun -theme $rofiTheme
-bindsym $mod+space exec $i3-wm.program.launcher.app
+bindsym $mod+Ctrl+space exec $i3-wm.program.launcher.app
 
 ## Launch // Command // <><Shift> Space ##
 set_from_resource $i3-wm.program.launcher.cmd i3-wm.program.launcher.cmd rofi -show run -theme $rofiTheme
 bindsym $mod+Shift+space exec $i3-wm.program.launcher.cmd
 
 ## Navigate // Window by Name // <><Ctrl> Space ##
-set_from_resource $i3-wm.program.launcher.window i3-wm.program.launcher.window rofi -show window -theme $rofiTheme
-bindsym $mod+Ctrl+space exec $i3-wm.program.launcher.window
+##set_from_resource $i3-wm.program.launcher.window i3-wm.program.launcher.window rofi -show window -theme $rofiTheme
+##bindsym $mod+Ctrl+space exec $i3-wm.program.launcher.window
 
 ## Launch // This Dialog // <><Shift> ? ##
 set_from_resource $i3-wm.program.help i3-wm.program.help /usr/bin/remontoire-toggle
