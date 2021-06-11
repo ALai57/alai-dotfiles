@@ -120,83 +120,6 @@
 
 (use-package treemacs-evil)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Centaur tabs
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package centaur-tabs
-  :load-path "~/.emacs.d/other/centaur-tabs"
-  :config
-  (setq centaur-tabs-style "bar"
-        centaur-tabs-height 32
-        centaur-tabs-set-icons t
-        centaur-tabs-set-modified-marker t
-        centaur-tabs-show-navigation-buttons t
-        centaur-tabs-set-bar 'under
-        x-underline-at-descent-line t)
-  (centaur-tabs-headline-match)
-  ;; (setq centaur-tabs-gray-out-icons 'buffer)
-  ;; (centaur-tabs-enable-buffer-reordering)
-  ;; (setq centaur-tabs-adjust-buffer-order t)
-  (centaur-tabs-mode t)
-  (setq uniquify-separator "/")
-  (setq uniquify-buffer-name-style 'forward)
-  (defun centaur-tabs-buffer-groups ()
-    "`centaur-tabs-buffer-groups' control buffers' group rules.
-
- Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
- All buffer name start with * will group to \"Emacs\".
- Other buffer group by `centaur-tabs-get-group-name' with project name."
-    (list
-     (cond
-      ;; ((not (eq (file-remote-p (buffer-file-name)) nil))
-      ;; "Remote")
-      ((or (string-equal "*" (substring (buffer-name) 0 1))
-           (memq major-mode '(magit-process-mode
-                              magit-status-mode
-                              magit-diff-mode
-                              magit-log-mode
-                              magit-file-mode
-                              magit-blob-mode
-                              magit-blame-mode
-                              )))
-       "Emacs")
-      ((derived-mode-p 'prog-mode)
-       "Editing")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
-      ((memq major-mode '(helpful-mode
-                          help-mode))
-       "Help")
-      ((memq major-mode '(org-mode
-                          org-agenda-clockreport-mode
-                          org-src-mode
-                          org-agenda-mode
-                          org-beamer-mode
-                          org-indent-mode
-                          org-bullets-mode
-                          org-cdlatex-mode
-                          org-agenda-log-mode
-                          diary-mode))
-       "OrgMode")
-      (t
-       (centaur-tabs-get-group-name (current-buffer))))))
-  :hook
-  (dashboard-mode . centaur-tabs-local-mode)
-  (term-mode . centaur-tabs-local-mode)
-  (calendar-mode . centaur-tabs-local-mode)
-  (org-agenda-mode . centaur-tabs-local-mode)
-  (helpful-mode . centaur-tabs-local-mode)
-  :bind
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward)
-  ("C-c t s" . centaur-tabs-counsel-switch-group)
-  ("C-c t p" . centaur-tabs-group-by-projectile-project)
-  ("C-c t g" . centaur-tabs-group-buffer-groups)
-  (:map evil-normal-state-map
-   ("g k" . centaur-tabs-forward)
-   ("g j" . centaur-tabs-backward)
-   ("g x" . centaur-tabs--kill-this-buffer-dont-ask)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized themes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -332,38 +255,93 @@
 (after! clojure-mode
   (setq clojure-indent-style 'always-align)
   (define-clojure-indent
-    (PUT 2)
-    (POST 2)
-    (PATCH 2)
     (DELETE 2)
     (GET 2)
-    (addtest 1)
+    (PATCH 2)
+    (POST 2)
+    (PUT 2)
     (are 1)
-    (are-spec 1)
     (context 2)
-    (defsystest 1)
-    (middleware 1)
-    (lz-post-lead 2)
-    (pending 1)
-    (op/p 1)
-    (quick-check 1)
-    (wrap-response 3)
-    (route-middleware 1)
     (for-all 1)
-    (routes 0)))
+    (middleware 1)
+    (pending 1)
+    (quick-check 1)
+    (route-middleware 1)
+    (routes 0)
+    (with-fake-routes 1)
+    (wrap-response 3)
+    ))
 
-(defun cider-repl-in-new-frame ()
-  (let ((new-frame (make-frame '((name . "REPL")
-                                 ;;(minibuffer . nil)
-                                 )))
-        (repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
-                      (buffer-list)))))
-    (select-frame-set-input-focus new-frame)
-    (print (frame-first-window new-frame))
-    (switch-to-buffer repl)))
+;;(defun cider-repl-in-new-frame ()
+  ;;(let ((new-frame (make-frame '((name . "REPL")
+                                 ;;;;(minibuffer . nil)
+                                 ;;)))
+        ;;(repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
+                      ;;(buffer-list)))))
+    ;;(select-frame-set-input-focus new-frame)
+    ;;(print (frame-first-window new-frame))
+    ;;(switch-to-buffer repl)))
+;;
+;;(setq cider-repl-pop-to-buffer-on-connect nil)
+;;(setq cider-connected-hook '(cider-repl-in-new-frame))
 
-(setq cider-repl-pop-to-buffer-on-connect nil)
-(setq cider-connected-hook '(cider-repl-in-new-frame))
+;; Teach CIDER to remember the monorepo nREPL
+;;
+
+(setq MONOREPO-REPL
+      '(:project "stonehenge" :host "localhost" :port "7888"))
+
+(setq STONEHENGE-PATH
+      "~/spl/stonehenge/")
+
+(defun stonehenge-nrepl ()
+  (interactive)
+  (let ((default-directory STONEHENGE-PATH)
+        (explicit-shell-file-name "bash"))
+    (message "Launching \"stonehenge nrepl\" locally")
+    (async-shell-command "bazel run //development/repl:repl -- $(pwd)")))
+
+(defun try-connect (conn dt remain)
+  (if (< remain 0)
+      (message "Failed to connect to repl")
+    (condition-case
+        ex
+        (cider-connect-clj conn)
+      (error (progn (print (format "Trying to connect... (%ss left)" remain))
+                    (sit-for dt)
+                    (try-connect conn dt (- remain dt)))))))
+
+(defun ->known-endpoint (conn)
+  (mapcar (lambda (x) (plist-get conn x))
+          (list :project :host :port)))
+
+(defun ->conn-string (conn)
+  (string-join (->known-endpoint conn) ":"))
+
+(setq cider-known-endpoints
+      (list (->known-endpoint MONOREPO-REPL)))
+
+(defun init-monorepl (current-repl)
+  ;; Need to set the current buffer so the REPL output gets piped to the right place
+  (with-current-buffer current-repl
+    (print "Starting MonoREPL....")
+    (cider-nrepl-request:eval "(start)" (cider-repl-init-eval-handler nil))))
+
+(defun monorepl? (b)
+  (string-match (->conn-string MONOREPO-REPL) (buffer-name b)))
+
+(defun cider-init-hook ()
+  (let ((current-repl (cider-current-repl nil 'ensure)))
+    (when (monorepl? current-repl)
+      (init-monorepl current-repl))))
+
+(setq cider-connected-hook '(cider-init-hook))
+
+(defun monorepl ()
+  (interactive)
+  ;; Kick off nrepl
+  (stonehenge-nrepl)
+  (try-connect MONOREPO-REPL 1 20))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
@@ -383,6 +361,11 @@
 ;; Java
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package lsp-java :init (add-hook 'java-mode-hook 'lsp))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Shell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(use-package direnv)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization layers
