@@ -288,29 +288,20 @@
 ;; Teach CIDER to remember the monorepo nREPL
 ;;
 
-(setq MONOREPO-REPL
-      '(:project "stonehenge" :host "localhost" :port "7888"))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Set me to your local `stonehenge' repo!
 (setq STONEHENGE-PATH
       "~/spl/stonehenge/")
 
-(defun stonehenge-nrepl ()
-  (interactive)
-  (let ((default-directory STONEHENGE-PATH)
-        (explicit-shell-file-name "bash"))
-    (message "Launching \"stonehenge nrepl\" locally")
-    (async-shell-command "bazel run //development/repl:repl -- $(pwd)")))
+(setq MONOREPO-CONN
+      '(:project "stonehenge" :host "localhost" :port "7888"))
 
-(defun try-connect (conn dt remain)
-  (if (< remain 0)
-      (message "Failed to connect to repl")
-    (condition-case
-        ex
-        (cider-connect-clj conn)
-      (error (progn (print (format "Trying to connect... (%ss left)" remain))
-                    (sit-for dt)
-                    (try-connect conn dt (- remain dt)))))))
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers for parsing the connection
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun ->known-endpoint (conn)
   (mapcar (lambda (x) (plist-get conn x))
           (list :project :host :port)))
@@ -318,30 +309,45 @@
 (defun ->conn-string (conn)
   (string-join (->known-endpoint conn) ":"))
 
-(setq cider-known-endpoints
-      (list (->known-endpoint MONOREPO-REPL)))
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers for staring the monorepl
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun init-monorepl (current-repl)
   ;; Need to set the current buffer so the REPL output gets piped to the right place
   (with-current-buffer current-repl
     (print "Starting MonoREPL....")
-    (cider-nrepl-request:eval "(start)" (cider-repl-init-eval-handler nil))))
+    (cider-nrepl-request:eval "(start)" (cider-repl-init-eval-handler nil))
+    (cider-nrepl-request:eval "(println ::repl-ready)" (cider-repl-init-eval-handler nil))))
 
 (defun monorepl? (b)
-  (string-match (->conn-string MONOREPO-REPL) (buffer-name b)))
+  (string-match (->conn-string MONOREPO-CONN) (buffer-name b)))
 
 (defun cider-init-hook ()
   (let ((current-repl (cider-current-repl nil 'ensure)))
     (when (monorepl? current-repl)
       (init-monorepl current-repl))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Configuring CIDER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq cider-known-endpoints
+      (list (->known-endpoint MONOREPO-CONN)))
+
 (setq cider-connected-hook '(cider-init-hook))
 
-(defun monorepl ()
-  (interactive)
-  ;; Kick off nrepl
-  (stonehenge-nrepl)
-  (try-connect MONOREPO-REPL 1 20))
+(defun cider-jack-in-stonehenge (params)
+  "Start an nREPL server for the stonehenge project and connect to it."
+  (interactive "P")
+  (let ((params (thread-first params
+                  (cider--update-project-dir)
+                  (cider--check-existing-session)
+                  (cider--update-jack-in-cmd))))
+    (nrepl-start-server-process
+     STONEHENGE-PATH
+     (concat STONEHENGE-PATH "repl")
+     (lambda (server-buffer)
+       (cider-connect-sibling-clj params server-buffer)))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
