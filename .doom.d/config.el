@@ -323,6 +323,53 @@
   (string-match (->conn-string MONOREPO-CONN) (buffer-name b)))
 
 (defun cider-init-hook ()
+
+  ;; override cider's nrepl session lookup dependency, to cover relative maven path to support Stonehenge
+  ;; this is needed because orchard, the library cider-nrepl middleware depends on, will fetch symbol location from different path than classpath.
+  ;; Because of that, once inside the dependency library jar, cider-find-var no longer works because it can't find the nrepl session since the filename does not fully match with classpath fetched from stonehenge nrepl session.
+  ;; To fix it, the default cider function "sesman-friendly-session-p" is overridden to not check exact classpath to filepath match, but instead only the maven substring.
+  ;; example:
+  ;; file location found from repl:
+  ;; "/private/var/tmp/_bazel_ywei/382bc82a66d87a56221cef203b9cc9cb/external/maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498/api-0.8.498.jar:cognitect/aws/client/api.clj"
+  ;; classpath returned from repl:
+  ;; "/private/var/tmp/_bazel_ywei/382bc82a66d87a56221cef203b9cc9cb/execroot/stonehenge/bazel-out/darwin-fastbuild/bin/development/repl/repl.runfiles/maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498/"
+  ;;
+  ;; default cider only checks prefix, where we will attempt to match "maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498" part only.
+  (defun try-trim-maven-path (path)
+    (let ((maven-index (string-match "maven" path)))
+      (if maven-index
+          (substring path maven-index (length path))
+        path)))
+
+  (cl-defmethod sesman-friendly-session-p ((_system (eql CIDER)) session)
+    "Check if SESSION is a friendly session."
+    (setcdr session (seq-filter #'buffer-live-p (cdr session)))
+    (when-let* ((repl (cadr session))
+                (proc (get-buffer-process repl))
+                (file (file-truename (or (buffer-file-name) default-directory))))
+      ;; With avfs paths look like /path/to/.avfs/path/to/some.jar#uzip/path/to/file.clj
+      (when (string-match-p "#uzip" file)
+        (let ((avfs-path (directory-file-name (expand-file-name (or (getenv "AVFSBASE")  "~/.avfs/")))))
+          (setq file (replace-regexp-in-string avfs-path "" file t t))))
+      (when (process-live-p proc)
+        (let* ((classpath (or (process-get proc :cached-classpath)
+                              (let ((cp (with-current-buffer repl
+                                          (cider-classpath-entries))))
+                                (process-put proc :cached-classpath cp)
+                                cp)))
+               (classpath-roots (or (process-get proc :cached-classpath-roots)
+                                    (let ((cp (thread-last classpath
+                                                (seq-filter (lambda (path) (not (string-match-p "\\.jar$" path))))
+                                                (mapcar #'file-name-directory)
+                                                (seq-remove  #'null))))
+                                      (process-put proc :cached-classpath-roots cp)
+                                      cp))))
+          (or (seq-find (lambda (path) (string-match path file))
+                        (mapcar 'try-trim-maven-path classpath))
+              (seq-find (lambda (path) (string-match path file))
+                        (mapcar 'try-trim-maven-path classpath-roots)))))))
+
+  ;; initialize monorepl after starting cider
   (let ((current-repl (cider-current-repl nil 'ensure)))
     (when (monorepl? current-repl)
       (init-monorepl current-repl))))
@@ -347,6 +394,41 @@
      (concat STONEHENGE-PATH "repl")
      (lambda (server-buffer)
        (cider-connect-sibling-clj params server-buffer)))))
+
+(use-package parseedn)
+
+(defun create-env-vars (map)
+  (maphash (lambda (k v)
+             (setenv k v))
+           map))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun apply-env-file (f)
+  (create-env-vars (parseedn-read-str (get-string-from-file f))))
+
+(defun select-env (params)
+  (interactive "P")
+  (let ((default-directory (projectile-project-root))
+        (counsel-find-file-ignore-regexp nil))
+    (ivy-read "Select environment: " #'read-file-name-internal
+              :matcher #'counsel--find-file-matcher
+              :predicate (lambda (x) (string-match-p "^\\.repl\\..*[^/]$" x))
+              :initial-input nil
+              :action (lambda (f)
+                        (print (format "Applying %s environment configuration." f))
+                        (apply-env-file f))
+              :preselect (counsel--preselect-file)
+              :require-match t
+              :history 'file-name-history
+              :keymap counsel-find-file-map
+              :caller 'select-env)))
+
+;;(select-env nil)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
