@@ -3,6 +3,11 @@
 sudo add-apt-repository -y ppa:lutris-team/lutris
 sudo add-apt-repository -y ppa:regolith-linux/release
 sudo add-apt-repository -y ppa:ubuntu-toolchain-r/ppa
+# Required to use the latest mesa (graphics) drivers
+# Not sure exactly the interactino between this and proprietary nvidia drivers
+#  but make sure you're running Nvidia's own proprietary drivers
+#  they are significantly better!
+sudo add-apt-repository ppa:kisak/kisak-mesa
                 
 # Docker install
 function install_docker_creds(){
@@ -31,6 +36,8 @@ sudo apt-get install -y lutris
 # For conda
 sudo apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6k
 
+# Depending on the Nvida-driver - a tool for measuring GPU
+#sudo apt-get install nvidia-utils-495
 
 ## For Emacs native comp
 sudo apt-get install autoconf make texinfo build-essential install install-info info libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses5-dev libxpm-dev automake autoconf libgnutls28-dev
