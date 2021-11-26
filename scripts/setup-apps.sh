@@ -7,6 +7,7 @@ cd bin
 # Leiningen
 function install_lein() {
 	wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+	chmod +x ~/bin/lein
 }
 
 # Clojure
