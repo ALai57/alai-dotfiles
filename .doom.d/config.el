@@ -120,83 +120,6 @@
 
 (use-package treemacs-evil)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Centaur tabs
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package centaur-tabs
-  :load-path "~/.emacs.d/other/centaur-tabs"
-  :config
-  (setq centaur-tabs-style "bar"
-        centaur-tabs-height 32
-        centaur-tabs-set-icons t
-        centaur-tabs-set-modified-marker t
-        centaur-tabs-show-navigation-buttons t
-        centaur-tabs-set-bar 'under
-        x-underline-at-descent-line t)
-  (centaur-tabs-headline-match)
-  ;; (setq centaur-tabs-gray-out-icons 'buffer)
-  ;; (centaur-tabs-enable-buffer-reordering)
-  ;; (setq centaur-tabs-adjust-buffer-order t)
-  (centaur-tabs-mode t)
-  (setq uniquify-separator "/")
-  (setq uniquify-buffer-name-style 'forward)
-  (defun centaur-tabs-buffer-groups ()
-    "`centaur-tabs-buffer-groups' control buffers' group rules.
-
- Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
- All buffer name start with * will group to \"Emacs\".
- Other buffer group by `centaur-tabs-get-group-name' with project name."
-    (list
-     (cond
-      ;; ((not (eq (file-remote-p (buffer-file-name)) nil))
-      ;; "Remote")
-      ((or (string-equal "*" (substring (buffer-name) 0 1))
-           (memq major-mode '(magit-process-mode
-                              magit-status-mode
-                              magit-diff-mode
-                              magit-log-mode
-                              magit-file-mode
-                              magit-blob-mode
-                              magit-blame-mode
-                              )))
-       "Emacs")
-      ((derived-mode-p 'prog-mode)
-       "Editing")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
-      ((memq major-mode '(helpful-mode
-                          help-mode))
-       "Help")
-      ((memq major-mode '(org-mode
-                          org-agenda-clockreport-mode
-                          org-src-mode
-                          org-agenda-mode
-                          org-beamer-mode
-                          org-indent-mode
-                          org-bullets-mode
-                          org-cdlatex-mode
-                          org-agenda-log-mode
-                          diary-mode))
-       "OrgMode")
-      (t
-       (centaur-tabs-get-group-name (current-buffer))))))
-  :hook
-  (dashboard-mode . centaur-tabs-local-mode)
-  (term-mode . centaur-tabs-local-mode)
-  (calendar-mode . centaur-tabs-local-mode)
-  (org-agenda-mode . centaur-tabs-local-mode)
-  (helpful-mode . centaur-tabs-local-mode)
-  :bind
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward)
-  ("C-c t s" . centaur-tabs-counsel-switch-group)
-  ("C-c t p" . centaur-tabs-group-by-projectile-project)
-  ("C-c t g" . centaur-tabs-group-buffer-groups)
-  (:map evil-normal-state-map
-   ("g k" . centaur-tabs-forward)
-   ("g j" . centaur-tabs-backward)
-   ("g x" . centaur-tabs--kill-this-buffer-dont-ask)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized themes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -332,38 +255,181 @@
 (after! clojure-mode
   (setq clojure-indent-style 'always-align)
   (define-clojure-indent
-    (PUT 2)
-    (POST 2)
-    (PATCH 2)
     (DELETE 2)
     (GET 2)
-    (addtest 1)
+    (PATCH 2)
+    (POST 2)
+    (PUT 2)
     (are 1)
-    (are-spec 1)
     (context 2)
-    (defsystest 1)
-    (middleware 1)
-    (lz-post-lead 2)
-    (pending 1)
-    (op/p 1)
-    (quick-check 1)
-    (wrap-response 3)
-    (route-middleware 1)
     (for-all 1)
-    (routes 0)))
+    (middleware 1)
+    (pending 1)
+    (quick-check 1)
+    (route-middleware 1)
+    (routes 0)
+    (with-fake-routes 1)
+    (wrap-response 3)
+    ))
 
-(defun cider-repl-in-new-frame ()
-  (let ((new-frame (make-frame '((name . "REPL")
-                                 ;;(minibuffer . nil)
-                                 )))
-        (repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
-                      (buffer-list)))))
-    (select-frame-set-input-focus new-frame)
-    (print (frame-first-window new-frame))
-    (switch-to-buffer repl)))
+;;(defun cider-repl-in-new-frame ()
+  ;;(let ((new-frame (make-frame '((name . "REPL")
+                                 ;;;;(minibuffer . nil)
+                                 ;;)))
+        ;;(repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
+                      ;;(buffer-list)))))
+    ;;(select-frame-set-input-focus new-frame)
+    ;;(print (frame-first-window new-frame))
+    ;;(switch-to-buffer repl)))
+;;
+;;(setq cider-repl-pop-to-buffer-on-connect nil)
+;;(setq cider-connected-hook '(cider-repl-in-new-frame))
 
-(setq cider-repl-pop-to-buffer-on-connect nil)
-(setq cider-connected-hook '(cider-repl-in-new-frame))
+;; Teach CIDER to remember the monorepo nREPL
+;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Set me to your local `stonehenge' repo!
+(setq STONEHENGE-PATH
+      "~/spl/stonehenge/")
+
+(setq MONOREPO-CONN
+      '(:project "stonehenge" :host "localhost" :port "7888"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers for parsing the connection
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun ->known-endpoint (conn)
+  (mapcar (lambda (x) (plist-get conn x))
+          (list :project :host :port)))
+
+(defun ->conn-string (conn)
+  (string-join (->known-endpoint conn) ":"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers for staring the monorepl
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun init-monorepl (current-repl)
+  ;; Need to set the current buffer so the REPL output gets piped to the right place
+  (with-current-buffer current-repl
+    (print "Starting MonoREPL....")
+    (cider-nrepl-request:eval "(start)" (cider-repl-init-eval-handler nil))
+    (cider-nrepl-request:eval "(println ::repl-ready)" (cider-repl-init-eval-handler nil))))
+
+(defun monorepl? (b)
+  (string-match (->conn-string MONOREPO-CONN) (buffer-name b)))
+
+(defun cider-init-hook ()
+
+  ;; override cider's nrepl session lookup dependency, to cover relative maven path to support Stonehenge
+  ;; this is needed because orchard, the library cider-nrepl middleware depends on, will fetch symbol location from different path than classpath.
+  ;; Because of that, once inside the dependency library jar, cider-find-var no longer works because it can't find the nrepl session since the filename does not fully match with classpath fetched from stonehenge nrepl session.
+  ;; To fix it, the default cider function "sesman-friendly-session-p" is overridden to not check exact classpath to filepath match, but instead only the maven substring.
+  ;; example:
+  ;; file location found from repl:
+  ;; "/private/var/tmp/_bazel_ywei/382bc82a66d87a56221cef203b9cc9cb/external/maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498/api-0.8.498.jar:cognitect/aws/client/api.clj"
+  ;; classpath returned from repl:
+  ;; "/private/var/tmp/_bazel_ywei/382bc82a66d87a56221cef203b9cc9cb/execroot/stonehenge/bazel-out/darwin-fastbuild/bin/development/repl/repl.runfiles/maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498/"
+  ;;
+  ;; default cider only checks prefix, where we will attempt to match "maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498" part only.
+  (defun try-trim-maven-path (path)
+    (let ((maven-index (string-match "maven" path)))
+      (if maven-index
+          (substring path maven-index (length path))
+        path)))
+
+  (cl-defmethod sesman-friendly-session-p ((_system (eql CIDER)) session)
+    "Check if SESSION is a friendly session."
+    (setcdr session (seq-filter #'buffer-live-p (cdr session)))
+    (when-let* ((repl (cadr session))
+                (proc (get-buffer-process repl))
+                (file (file-truename (or (buffer-file-name) default-directory))))
+      ;; With avfs paths look like /path/to/.avfs/path/to/some.jar#uzip/path/to/file.clj
+      (when (string-match-p "#uzip" file)
+        (let ((avfs-path (directory-file-name (expand-file-name (or (getenv "AVFSBASE")  "~/.avfs/")))))
+          (setq file (replace-regexp-in-string avfs-path "" file t t))))
+      (when (process-live-p proc)
+        (let* ((classpath (or (process-get proc :cached-classpath)
+                              (let ((cp (with-current-buffer repl
+                                          (cider-classpath-entries))))
+                                (process-put proc :cached-classpath cp)
+                                cp)))
+               (classpath-roots (or (process-get proc :cached-classpath-roots)
+                                    (let ((cp (thread-last classpath
+                                                (seq-filter (lambda (path) (not (string-match-p "\\.jar$" path))))
+                                                (mapcar #'file-name-directory)
+                                                (seq-remove  #'null))))
+                                      (process-put proc :cached-classpath-roots cp)
+                                      cp))))
+          (or (seq-find (lambda (path) (string-match path file))
+                        (mapcar 'try-trim-maven-path classpath))
+              (seq-find (lambda (path) (string-match path file))
+                        (mapcar 'try-trim-maven-path classpath-roots)))))))
+
+  ;; initialize monorepl after starting cider
+  (let ((current-repl (cider-current-repl nil 'ensure)))
+    (when (monorepl? current-repl)
+      (init-monorepl current-repl))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Configuring CIDER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq cider-known-endpoints
+      (list (->known-endpoint MONOREPO-CONN)))
+
+(setq cider-connected-hook '(cider-init-hook))
+
+(defun cider-jack-in-stonehenge (params)
+  "Start an nREPL server for the stonehenge project and connect to it."
+  (interactive "P")
+  (let ((params (thread-first params
+                  (cider--update-project-dir)
+                  (cider--check-existing-session)
+                  (cider--update-jack-in-cmd))))
+    (nrepl-start-server-process
+     STONEHENGE-PATH
+     (concat STONEHENGE-PATH "repl")
+     (lambda (server-buffer)
+       (cider-connect-sibling-clj params server-buffer)))))
+
+(use-package parseedn)
+
+(defun create-env-vars (map)
+  (maphash (lambda (k v)
+             (setenv k v))
+           map))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun apply-env-file (f)
+  (create-env-vars (parseedn-read-str (get-string-from-file f))))
+
+(defun select-env (params)
+  (interactive "P")
+  (let ((default-directory (projectile-project-root))
+        (counsel-find-file-ignore-regexp nil))
+    (ivy-read "Select environment: " #'read-file-name-internal
+              :matcher #'counsel--find-file-matcher
+              :predicate (lambda (x) (string-match-p "^\\.repl\\..*[^/]$" x))
+              :initial-input nil
+              :action (lambda (f)
+                        (print (format "Applying %s environment configuration." f))
+                        (apply-env-file f))
+              :preselect (counsel--preselect-file)
+              :require-match t
+              :history 'file-name-history
+              :keymap counsel-find-file-map
+              :caller 'select-env)))
+
+;;(select-env nil)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
@@ -383,6 +449,11 @@
 ;; Java
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package lsp-java :init (add-hook 'java-mode-hook 'lsp))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Shell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(use-package direnv)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization layers
