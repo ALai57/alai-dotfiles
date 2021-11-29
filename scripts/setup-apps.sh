@@ -19,7 +19,7 @@ function install_clojure() {
 
 function install_emacs() {
 	# Several other deps need to be install before running this (in the setup.sh script)
-	cd ~/dev/emacs
+	cd ~/spl/emacs
 	sudo CC="/usr/bin/gcc-10" ./autogen.sh && ./configure --with-native-compilation --with-mailutils
 	sudo make -j 4 && make install
 }
@@ -28,13 +28,9 @@ function install_doom(){
 	doom install
 	cp -r ~/.doom.d ~/.doom.d.old
 	# Needs to point to the correct location for the `dotfiles` repo
-	sudo ln -s ~/dev/alai-dotfiles/.doom.d ~/.doom.d
+	sudo ln -s ~/spl/alai-dotfiles/.doom.d ~/.doom.d
 	doom sync
 }
 
-function install_discord(){
-	sudo snap install discord
-}
-
 #install_emacs
-install_lein
+#install_lein
