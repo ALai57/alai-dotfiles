@@ -9,6 +9,8 @@ brew install --cask slack
 brew install --cask docker
 brew install --cask zoom
 brew install postgres
+brew install clojure/tools/clojure
+brew install wget
 
 # Java
 brew tap adoptopenjdk/openjdk
