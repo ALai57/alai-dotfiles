@@ -113,6 +113,7 @@
        org               ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        plantuml          ; diagrams for confusing people more
+       php
        python            ; beautiful is better than ugly
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client

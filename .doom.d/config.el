@@ -253,7 +253,7 @@
   (add-to-list 'aggressive-indent-protected-commands 'undo-fu-only-undo))
 
 (after! clojure-mode
-  (setq clojure-indent-style 'always-align)
+  (setq clojure-indent-style 'always-indent)
   (define-clojure-indent
     (DELETE 2)
     (GET 2)
@@ -382,18 +382,6 @@
 
 (setq cider-connected-hook '(cider-init-hook))
 
-(defun cider-jack-in-stonehenge (params)
-  "Start an nREPL server for the stonehenge project and connect to it."
-  (interactive "P")
-  (let ((params (thread-first params
-                  (cider--update-project-dir)
-                  (cider--check-existing-session)
-                  (cider--update-jack-in-cmd))))
-    (nrepl-start-server-process
-     STONEHENGE-PATH
-     (concat STONEHENGE-PATH "repl")
-     (lambda (server-buffer)
-       (cider-connect-sibling-clj params server-buffer)))))
 
 (use-package parseedn)
 
@@ -430,6 +418,19 @@
 
 ;;(select-env nil)
 
+(defun cider-jack-in-stonehenge (params)
+  "Start an nREPL server for the stonehenge project and connect to it."
+  (interactive "P")
+  (select-env params)
+  (let ((params (thread-first params
+                  (cider--update-project-dir)
+                  (cider--check-existing-session)
+                  (cider--update-jack-in-cmd))))
+    (nrepl-start-server-process
+     STONEHENGE-PATH
+     (concat STONEHENGE-PATH "repl")
+     (lambda (server-buffer)
+       (cider-connect-sibling-clj params server-buffer)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
