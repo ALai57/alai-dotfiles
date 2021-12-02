@@ -14,7 +14,7 @@ git clone git@github.com:ALai57/fourclojure.el.git
 git clone git@github.com:clojure/clojure.git
 git clone git@github.com:clojure/clojurescript.git
 git clone git@github.com:bhauman/figwheel-main.git
-
+git clone git@github.com:koekeishiya/limelight.git
 git clone git://git.savannah.gnu.org/emacs.git
 
 # Splash
