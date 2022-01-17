@@ -18,6 +18,7 @@
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
 (package! cider)
+(package! parseedn)
 (package! treemacs
   :recipe (:type git :host github :repo "Alexander-Miller/treemacs"))
 (package! treemacs-evil)

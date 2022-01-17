@@ -352,18 +352,55 @@
     (for-all 1)
     (routes 0)))
 
-(defun cider-repl-in-new-frame ()
-  (let ((new-frame (make-frame '((name . "REPL")
-                                 ;;(minibuffer . nil)
-                                 )))
-        (repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
-                      (buffer-list)))))
-    (select-frame-set-input-focus new-frame)
-    (print (frame-first-window new-frame))
-    (switch-to-buffer repl)))
+;;(defun cider-repl-in-new-frame ()
+  ;;(let ((new-frame (make-frame '((name . "REPL")
+                                 ;;;;(minibuffer . nil)
+                                 ;;)))
+        ;;(repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
+                      ;;(buffer-list)))))
+    ;;(select-frame-set-input-focus new-frame)
+    ;;(print (frame-first-window new-frame))
+    ;;(switch-to-buffer repl)))
 
 (setq cider-repl-pop-to-buffer-on-connect nil)
-(setq cider-connected-hook '(cider-repl-in-new-frame))
+;;(setq cider-connected-hook '(cider-repl-in-new-frame))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Environment variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package parseedn)
+
+(defun create-env-vars (map)
+  (maphash (lambda (k v)
+             (setenv k v))
+           map))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun apply-env-file (f)
+  (create-env-vars (parseedn-read-str (get-string-from-file f))))
+
+(defun select-env (params)
+  (interactive "P")
+  (let ((default-directory (projectile-project-root))
+        (counsel-find-file-ignore-regexp nil))
+    (ivy-read "Select environment: " #'read-file-name-internal
+              :matcher #'counsel--find-file-matcher
+              :predicate (lambda (x) (string-match-p "^\\.repl\\..*[^/]$" x))
+              :initial-input nil
+              :action (lambda (f)
+                        (print (format "Applying %s environment configuration." f))
+                        (apply-env-file f))
+              :preselect (counsel--preselect-file)
+              :require-match t
+              :history 'file-name-history
+              :keymap counsel-find-file-map
+              :caller 'select-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
