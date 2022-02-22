@@ -12,6 +12,9 @@ brew install postgres
 brew install clojure/tools/clojure
 brew install wget
 brew install bazelisk
+brew install awscli
+brew install gnupg
+brew install jq
 
 # Auth/VPN
 brew install saml2aws

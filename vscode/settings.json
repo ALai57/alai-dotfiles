@@ -1,0 +1,63 @@
+{
+    "vim.foldfix": true,
+    "vim.easymotion": true,
+    "vim.useSystemClipboard": true,
+    "vim.normalModeKeyBindings": [
+        {
+            "before": [ "<C-u>" ],
+            "after": [ "H", "z", "z" ]
+        },
+        {
+            "before": [ "<C-d>" ],
+            "after": [ "L", "z", "z" ]
+        }
+    ],
+    "editor.minimap.enabled": false,
+    "editor.hideCursorInOverviewRuler": true,
+    "editor.scrollbar.vertical": "hidden",
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [ "<space>" ],
+            "commands": [ "vspacecode.space" ]
+        },
+        {
+            "before": [ "," ],
+            "commands": [
+                "vspacecode.space",
+                {
+                    "command": "whichkey.triggerKey",
+                    "args": "m"
+                }
+            ]
+        }
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": [ "<space>" ],
+            "commands": [ "vspacecode.space" ]
+        },
+        {
+            "before": [ "," ],
+            "commands": [ "vspacecode.space",
+                {
+                    "command": "whichkey.triggerKey",
+                    "args": "m"
+                }
+            ]
+        }
+    ],
+    "vspacecode.bindingOverrides": [
+        {
+            "keys": "m",
+            "name": "Test",
+            "type": "bindings",
+            "bindings": [{
+                "key": "t",
+                "name": "Test",
+                "type": "command",
+                "command": "better-phpunit.run",
+            }]
+        }
+  ]
+    
+}
