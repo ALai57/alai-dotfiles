@@ -299,6 +299,9 @@
 (setq MONOREPO-CONN
       '(:project "stonehenge" :host "localhost" :port "7888"))
 
+(setq MONOREPO-CLJS-CONN
+      '(:project "stonehenge-cljs" :host "localhost" :port "7889"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helpers for parsing the connection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -378,7 +381,8 @@
 ;; Configuring CIDER
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq cider-known-endpoints
-      (list (->known-endpoint MONOREPO-CONN)))
+      (list (->known-endpoint MONOREPO-CONN)
+            (->known-endpoint MONOREPO-CLJS-CONN)))
 
 (setq cider-connected-hook '(cider-init-hook))
 
