@@ -272,6 +272,15 @@
     (wrap-response 3)
     ))
 
+
+(defun always-indent! (params)
+  (interactive "P")
+  (setq clojure-indent-style 'always-indent))
+
+(defun always-align! (params)
+  (interactive "P")
+  (setq clojure-indent-style 'always-align))
+
 ;;(defun cider-repl-in-new-frame ()
   ;;(let ((new-frame (make-frame '((name . "REPL")
                                  ;;;;(minibuffer . nil)
