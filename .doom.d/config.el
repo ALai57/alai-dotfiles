@@ -420,6 +420,12 @@
               :keymap counsel-find-file-map
               :caller 'select-env)))
 
+(defun cider-connect-stonehenge-cljs (params)
+  (interactive "P")
+  (cider-connect-cljs (list :host           "localhost"
+                            :port           7889
+                            :cljs-repl-type 'shadow-select)))
+
 ;;(select-env nil)
 
 (defun cider-jack-in-stonehenge (params)
