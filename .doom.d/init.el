@@ -113,7 +113,7 @@
        org               ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        plantuml          ; diagrams for confusing people more
-       php
+       (php +lsp)
        python            ; beautiful is better than ugly
        ;;racket            ; a DSL for DSLs
        ;;rest              ; Emacs as a REST client
@@ -123,7 +123,7 @@
        sh                ; she sells {ba,z,fi}sh shells on the C xor
 
        ;;web               ; the tubes
-       ;;yaml              ; JSON, but readable
+       yaml              ; JSON, but readable
 
        :email
        ;;(wanderlust +gmail)

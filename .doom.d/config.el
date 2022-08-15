@@ -281,6 +281,10 @@
   (interactive "P")
   (setq clojure-indent-style 'always-align))
 
+
+(set-formatter! 'cljstyle "cljstyle pipe" :modes '(clojure-mode))
+
+
 ;;(defun cider-repl-in-new-frame ()
   ;;(let ((new-frame (make-frame '((name . "REPL")
                                  ;;;;(minibuffer . nil)
@@ -431,6 +435,10 @@
 
 (defun cider-connect-stonehenge-cljs (params)
   (interactive "P")
+  ;; Open a browser that connects a JS environment to the REPL
+  (browse-url "http://localhost:9630")
+  (browse-url "http://localhost:1337")
+  (browse-url "http://localhost:9630/repl-js/browser-repl")
   (cider-connect-cljs (list :host           "localhost"
                             :port           7889
                             :cljs-repl-type 'shadow-select)))
@@ -442,15 +450,40 @@
   (interactive "P")
   (select-env params)
   (let ((params (thread-first params
-                  (cider--update-project-dir)
-                  (cider--check-existing-session)
-                  (cider--update-jack-in-cmd))))
+                              (cider--update-project-dir)
+                              (cider--check-existing-session)
+                              (cider--update-jack-in-cmd))))
     (nrepl-start-server-process
      STONEHENGE-PATH
      (concat STONEHENGE-PATH "repl")
      (lambda (server-buffer)
        (cider-connect-sibling-clj params server-buffer)))))
 
+(defun get-nrepl-server-processes ()
+  (seq-filter (lambda (proc)
+                (string-match-p "nrepl-server" (process-name proc)))
+              (process-list)))
+
+(defun cider-jack-in-das (params)
+  "Start an nREPL server for the stonehenge project and connect to it."
+  (interactive "P")
+  (let ((params (thread-first params
+                              (cider--update-project-dir)
+                              (cider--check-existing-session)
+                              (cider--update-jack-in-cmd))))
+    (nrepl-start-server-process
+     STONEHENGE-PATH
+     "bazel run //splash/ui/das:repl"
+     (lambda (server-buffer)
+       (setq cider-shadow-default-options ":browser-repl")
+       (sit-for 20)
+       (cider-connect-stonehenge-cljs params)
+       ))))
+
+(defun kill-all-REPL-servers (params)
+  (interactive "P")
+  (mapcar #'delete-process (get-nrepl-server-processes)))
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

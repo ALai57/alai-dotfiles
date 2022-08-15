@@ -160,5 +160,56 @@
 (define-key evil-normal-state-map "gow" '+lookup/definition-other-window)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
+;; PHP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun find-php-header ()
+  (interactive)
+  (re-search-forward "<?php")
+  (evil-next-line))
+
+(defun psysh-eval-buffer ()
+  (interactive)
+  ;; like save-excursion, but we need to set the marker type to 't
+  (let ((m (point-marker)))
+    (mark-whole-buffer)
+    (find-php-header)
+    (psysh-eval-region (mark) (point))
+    (goto-char m)
+    (doom/escape)))
+
+(defun psysh-eval-string (s)
+  "Evalute PHP code as a string"
+  (interactive)
+  (let ((buf (psysh--make-process)))
+    (comint-send-string buf s)))
+
+(defun get-namespace ()
+  (let ((str (buffer-substring-no-properties 1 (buffer-size))))
+    (when (string-match "namespace \\(.*\\);" str)
+      (downcase (match-string 1 str)))))
+
+(defun psysh-quit ()
+  (interactive)
+  (psysh-eval-string "exit\n"))
+
+(defun psysh-eval-line ()
+  (interactive)
+  ;; like save-excursion, but we need to set the marker type to 't
+  (let ((m (point-marker)))
+    (evil-visual-line)
+    (point)
+    (psysh-eval-region (point-at-bol) (1+ (point-at-eol)))
+    (goto-char m)
+    (doom/escape)))
+
+(map! :after php-mode
+      :map php-mode-map
+      :n ", e b" #'psysh-eval-buffer
+      ;;:n ", e f" #'psysh-eval-defun-at-point
+      :n ", e l" #'psysh-eval-line
+      :n ", s q" #'psysh-quit
+      ;;:n ", t n" #'psysh-test-run-ns-tests
+      ;;:n ", t p" #'psysh-test-run-project-tests
+      :n ", '"   #'psysh)
