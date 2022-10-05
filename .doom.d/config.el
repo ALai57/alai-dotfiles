@@ -375,9 +375,9 @@
                                 cp)))
                (classpath-roots (or (process-get proc :cached-classpath-roots)
                                     (let ((cp (thread-last classpath
-                                                (seq-filter (lambda (path) (not (string-match-p "\\.jar$" path))))
-                                                (mapcar #'file-name-directory)
-                                                (seq-remove  #'null))))
+                                                           (seq-filter (lambda (path) (not (string-match-p "\\.jar$" path))))
+                                                           (mapcar #'file-name-directory)
+                                                           (seq-remove  #'null))))
                                       (process-put proc :cached-classpath-roots cp)
                                       cp))))
           (or (seq-find (lambda (path) (string-match path file))
@@ -389,6 +389,43 @@
   (let ((current-repl (cider-current-repl nil 'ensure)))
     (when (monorepl? current-repl)
       (init-monorepl current-repl))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; OKTA Login
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun access-key (str)
+  (when (string-match "ACCESS_KEY=\\(.*\\)\n" str)
+    (match-string 1 str)))
+
+(defun secret-key (str)
+  (when (string-match "SECRET_KEY=\\(.*\\)\n" str)
+    (match-string 1 str)))
+
+(defun session-token (str)
+  (when (string-match "SESSION_TOKEN=\\(.*\\)\n" str)
+    (match-string 1 str)))
+
+(defun set-aws-env-vars (str)
+  (let* ((ak  (access-key str))
+         (sk  (secret-key str))
+         (st  (session-token str)))
+    ;;(print (concat "ACCESS KEY" ak))
+    ;;(print (concat "SECRET KEY" sk))
+    ;;(print (concat "SESSION TOKEN" st))
+    (when (and ak sk st)
+      (setenv "AWS_ACCESS_KEY_ID" ak)
+      (setenv "AWS_SECRET_ACCESS_KEY" sk)
+      (setenv "AWS_SESSION_TOKEN" st)
+      (setenv "AWS_REGION" "us-east-1"))))
+
+;;(set-aws-env-vars "SECRET_KEY=stuff\nACCESS_KEY=HELLOTHERE\nSESSION_TOKEN=Morethings\n")
+
+(defun okta-login (env)
+  (let* ((default-directory "/tmp"))
+    (set-aws-env-vars
+     (shell-command-to-string (concat "~/bin/aws_login_emacs " env)))))
+
+;;(okta-login "stage")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuring CIDER
@@ -414,7 +451,13 @@
     (buffer-string)))
 
 (defun apply-env-file (f)
-  (create-env-vars (parseedn-read-str (get-string-from-file f))))
+  (let* ((edn-hashmap (parseedn-read-str (get-string-from-file f)))
+         (okta-env    (gethash "OKTA_ENV" edn-hashmap)))
+    (create-env-vars edn-hashmap)
+    (when okta-env
+      (okta-login okta-env))))
+
+;;(apply-env-file "~/spl/stonehenge/splash/services/document_administration/.repl.document-administration.local.edn")
 
 (defun select-env (params)
   (interactive "P")
