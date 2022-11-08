@@ -160,5 +160,25 @@
 (define-key evil-normal-state-map "gow" '+lookup/definition-other-window)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
+;; Python state
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :after python
+      :map python-mode-map
+      :n ", e b" #'python-shell-send-buffer
+      :n ", e f" #'python-shell-send-defun
+      :n ", e l" #'python-shell-send-statement
+      :n ", '" #'+python/open-repl
+      )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ruby
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :after ruby-mode
+      :map ruby-mode-map
+      :n ", e b" #'ruby-send-buffer
+      :n ", e f" #'ruby-send-block
+      :n ", e l" #'ruby-send-last-sexp
+      :n ", s s" #'inf-ruby-buffer
+      :n ", t n" #'cider-test-run-ns-tests
+      :n ", t p" #'cider-test-run-project-tests
+      :n ", '"   #'inf-ruby)
