@@ -17,7 +17,8 @@
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
-(package! cider)
+(package! cider :pin "80408364f8e6870d8f5a33e0e096b86f1a7ef144")
+;;(package! cider-nrepl :pin "8c57436fdd45b47d259cfe31714ff2b1b5908835")
 (package! parseedn)
 (package! treemacs
   :recipe (:type git :host github :repo "Alexander-Miller/treemacs"))
@@ -29,6 +30,10 @@
 (package! cider-eval-sexp-fu)
 (package! aggressive-indent)
 (package! treemacs-persp)
+
+(package! transient :pin "c2bdf7e12c530eb85476d3aef317eb2941ab9440")
+(package! with-editor :pin "391e76a256aeec6b9e4cbd733088f30c677d965b")
+(package! compat :pin "6f73eac")
 ;;(package! org-bullets)
 ;;(package! color)
 

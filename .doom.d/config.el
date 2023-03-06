@@ -10,6 +10,7 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+(require 'shortdoc)
 (setq user-full-name "Andrew Lai"
       user-mail-address "andrew.s.lai5@gmail.com")
 
@@ -266,15 +267,18 @@
     (are-spec 1)
     (context 2)
     (defsystest 1)
-    (middleware 1)
-    (lz-post-lead 2)
-    (pending 1)
-    (op/p 1)
-    (quick-check 1)
-    (wrap-response 3)
-    (route-middleware 1)
     (for-all 1)
-    (routes 0)))
+    (lz-post-lead 2)
+    (middleware 1)
+    (op/p 1)
+    (pending 1)
+    (quick-check 1)
+    (reg-event-db 1)
+    (reg-event-fx 1)
+    (route-middleware 1)
+    (routes 0)
+    (wrap-response 3)
+    ))
 
 ;;(defun cider-repl-in-new-frame ()
   ;;(let ((new-frame (make-frame '((name . "REPL")
@@ -354,3 +358,7 @@
 
 (setq plantuml-jar-path "~/bin/plantuml-1.2022.8.jar")
 (setq plantuml-default-exec-mode 'jar)
+
+(use-package dap-mode
+  :custom
+  (dap-auto-configure-features '(sessions locals tooltip repl)))

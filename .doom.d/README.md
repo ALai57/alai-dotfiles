@@ -19,3 +19,8 @@ alias dr='~/.emacs.d/bin/doom sync'
 
 # Installing local packages (e.g. for development)
 symlink the package into the `local-packages` directory and add it to config.el
+
+
+Sometimes striaght (doom's package manager) just fails. To deal with this, 
+navigate to `.emacs.d/.local/straight/` and kill the contents of the directory. 
+After that, run `doom sync` again.
