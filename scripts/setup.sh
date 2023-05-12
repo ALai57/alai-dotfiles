@@ -7,7 +7,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # brew install --cask slack
 # brew install --cask zoom
-brew install --cask docker
+# brew install --cask docker
 brew install postgres
 brew install clojure/tools/clojure
 brew install wget
@@ -46,8 +46,9 @@ brew install leiningen
 
 # Manual 
 # - Anaconda
-# - Zoom
 # - Chrome
 # - Globalprotect https://splashfinancial.atlassian.net/wiki/spaces/TW/pages/515932191/Accounts+Setup
-# - AWS VPN client
+# - Docker desktop https://www.docker.com/products/docker-desktop/
+
+# Navigation
 # - Rebind CAPS LOCK to control https://appleinsider.com/inside/macos/tips/how-to-remap-caps-lock-control-option-command-keys-in-macos
