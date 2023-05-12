@@ -1,0 +1,37 @@
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+export PATH="/opt/homebrew/bin/:/Users/alai/bin/:$PATH"
+export PATH="/Users/alai/.composer/vendor/bin:$PATH"
+
+alias emacs='/Users/alai/spl/emacs/nextstep/Emacs.app/Contents/MacOS/Emacs'
+alias sc='source ~/.zprofile'
+alias doom='~/.config/emacs/bin/doom'
+alias vrc='vim ~/.zprofile'
+alias kickemacs='pkill -SIGUSR2 Emacs'
+alias gpr="git pull --rebase origin master" # && git push --force-with-lease
+alias plantuml="java -jar ~/bin/plantuml.jar"
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias st='cd ~/spl/stonehenge'
+alias web='cd ~/spl/Website'
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+alias chromium="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+
+#alias st-lint='clj-kondo --fail-level error --config ~/spl/stonehenge/development/lint/clj-kondo.edn --lint $(find ~/spl/stonehenge -type f -regex ".*\.clj[csx]?$" ! \( -path "./third_party/*" -o -path "./experimental/*" -o -path "./education/*" \))'
+alias li-test='bazel test //splash/services/lender_integration:tests'
+alias rates-gen-test='bazel test //splash/services/rates_generation:tests'
+alias da-test='bazel test //splash/services/document_administration:tests'
+alias saus-test='bazel test //splash/services/saus:tests'
+alias crs-test='bazel test //splash/services/credit_risk:tests'
+alias pf-test='bazel test //splash/services/password_fraud:tests'
+
+alias das-repl='bazel run //splash/ui/das:repl'
+alias lpm-repl='bazel run //splash/ui/lpm:repl'
+
+########################################
+alias li-dev-db="export PGPASSWORD='$LI_DEV_DB_PASS' && psql $LI_DEV_DB_NAME -h $LI_DEV_DB_HOST -U $LI_DEV_DB_USER"
+alias test-vpc="curl https://lender-integration-dev.splashfinancial.fyi/info"
