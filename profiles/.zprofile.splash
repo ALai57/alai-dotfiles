@@ -33,5 +33,4 @@ alias das-repl='bazel run //splash/ui/das:repl'
 alias lpm-repl='bazel run //splash/ui/lpm:repl'
 
 ########################################
-alias li-dev-db="export PGPASSWORD='$LI_DEV_DB_PASS' && psql $LI_DEV_DB_NAME -h $LI_DEV_DB_HOST -U $LI_DEV_DB_USER"
 alias test-vpc="curl https://lender-integration-dev.splashfinancial.fyi/info"
