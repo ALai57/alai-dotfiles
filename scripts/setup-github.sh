@@ -11,10 +11,15 @@ git clone git@github.com:ALai57/walkthroughs.git
 # Some basic things
 git clone git@github.com:clojure/clojure.git
 git clone git@github.com:clojure/clojurescript.git
+git clone git://git.savannah.gnu.org/emacs.git
+
+# Interesting libs
+git clone git@github.com:mui/material-ui.git
+git clone git@github.com:ianstormtaylor/slate.git
+git clone git@github.com:udecode/plate.git
 git clone git@github.com:metosin/reitit.git
 git clone git@github.com:metosin/malli.git
 git clone git@github.com:thheller/shadow-cljs.git
-git clone git://git.savannah.gnu.org/emacs.git
 
 # Splash
 git clone git@github.com:SplashFinancial/Website.git
