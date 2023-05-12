@@ -39,6 +39,7 @@ brew install openjdk
 
 # Other
 brew install tfenv
+brew install leiningen
 
 # Create SSH for GH
 #ssh-keygen -t rsa
