@@ -18,6 +18,7 @@ brew install jq
 
 # Auth/VPN
 brew install saml2aws
+sudo softwareupdate --install-rosetta
 brew install --cask aws-vpn-client
 
 ## Window management
@@ -28,13 +29,16 @@ brew install --cask alt-tab
 #brew install --cask amethyst
 
 # Java
-brew tap adoptopenjdk/openjdk
-brew install --cask adoptopenjdk13
+#brew tap adoptopenjdk/openjdk
+#brew install --cask adoptopenjdk18
+brew install openjdk
 
 # Emacs
 #brew tap d12frosted/emacs-plus
 #brew install emacs-plus@28 --with-native-comp --with-no-titlebar
 
+# Other
+brew install tfenv
 
 # Create SSH for GH
 #ssh-keygen -t rsa
