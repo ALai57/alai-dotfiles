@@ -32,6 +32,7 @@ brew install --cask alt-tab
 #brew tap adoptopenjdk/openjdk
 #brew install --cask adoptopenjdk18
 brew install openjdk
+sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
 
 # Emacs
 #brew tap d12frosted/emacs-plus
@@ -40,6 +41,7 @@ brew install openjdk
 # Other
 brew install tfenv
 brew install leiningen
+brew install node
 
 # Create SSH for GH
 #ssh-keygen -t rsa
