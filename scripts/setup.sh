@@ -35,7 +35,7 @@ brew install openjdk
 
 # Emacs
 #brew tap d12frosted/emacs-plus
-#brew install emacs-plus@28 --with-native-comp --with-no-titlebar
+#brew install emacs-plus@30 --with-native-comp --with-xwidgets
 
 # Other
 brew install tfenv
