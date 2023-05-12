@@ -56,8 +56,10 @@
                 "name": "Test",
                 "type": "command",
                 "command": "better-phpunit.run",
+                //"command": "phpunit.TestNearest",
             }]
         }
-  ]
+    ],
+    "window.zoomLevel": 2
     
 }

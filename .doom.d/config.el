@@ -523,6 +523,22 @@
        (cider-connect-stonehenge-cljs params)
        ))))
 
+(defun cider-jack-in-lpm (params)
+  "Start an nREPL server for the stonehenge project and connect to it."
+  (interactive "P")
+  (let ((params (thread-first params
+                              (cider--update-project-dir)
+                              (cider--check-existing-session)
+                              (cider--update-jack-in-cmd))))
+    (nrepl-start-server-process
+     STONEHENGE-PATH
+     "bazel run //splash/ui/lpm:repl"
+     (lambda (server-buffer)
+       (setq cider-shadow-default-options ":browser-repl")
+       (sit-for 20)
+       (cider-connect-stonehenge-cljs params)
+       ))))
+
 (defun kill-all-REPL-servers (params)
   (interactive "P")
   (mapcar #'delete-process (get-nrepl-server-processes)))
@@ -542,6 +558,16 @@
   '(update-diff-colors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Portal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun start-portal (params)
+  (interactive "P")
+  (cider-nrepl-sync-request:eval "(require '[portal.api :as p])")
+  (cider-nrepl-sync-request:eval "(add-tap #'p/submit)")
+  (cider-nrepl-sync-request:eval "(p/open {:window-title \"Portal taps\" :launcher :emacs})"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package lsp-java :init (add-hook 'java-mode-hook 'lsp))
@@ -557,3 +583,11 @@
 (load! "+bindings")
 (load! "+treemacs")
 ;;(load! "lisp/fourclojure")
+
+(setq plantuml-jar-path "~/bin/plantuml.jar")
+(setq plantuml-default-exec-mode 'jar)
+(setq plantuml-output-type "svg")
+;; Open in same window
+(add-to-list 'display-buffer-alist
+             '("*PLANTUML Preview*" display-buffer-in-direction)
+             )
