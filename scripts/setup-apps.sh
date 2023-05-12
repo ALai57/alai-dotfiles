@@ -19,5 +19,5 @@ function install_doom(){
 }
 
 #install_emacs
-#install_lein
-#install_doom
+install_lein
+install_doom
