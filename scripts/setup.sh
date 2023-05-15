@@ -8,7 +8,11 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # brew install --cask slack
 # brew install --cask zoom
 # brew install --cask docker
-brew install postgres
+brew install postgresql@14
+brew services start postgresql@14
+brew install libpq
+echo 'export PATH="/opt/homebrew/opt/libpq/bin:$PATH"' >> ~/.zshrc
+
 brew install clojure/tools/clojure
 brew install wget
 brew install bazelisk
@@ -37,11 +41,13 @@ sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVir
 # Emacs
 #brew tap d12frosted/emacs-plus
 #brew install emacs-plus@30 --with-native-comp --with-xwidgets
+# Create a Mac alias so it can be found by launcher https://apple.stackexchange.com/a/32495
 
 # Other
 brew install tfenv
 brew install leiningen
 brew install node
+brew install ripgrep
 
 # Create SSH for GH
 #ssh-keygen -t rsa
@@ -54,3 +60,18 @@ brew install node
 
 # Navigation
 # - Rebind CAPS LOCK to control https://appleinsider.com/inside/macos/tips/how-to-remap-caps-lock-control-option-command-keys-in-macos
+
+# AWS SSO
+# Add config entries to ~/.aws/config
+#
+# [profile PROFILE_NAME]
+# sso_start_url = START-URL-HERE
+# sso_region = us-east-1
+# sso_account_id = ACCOUNT-ID-HERE
+# sso_role_name = tribe_sso_permission_set
+# region = us-east-1
+
+## TODO:
+## plantuml
+## visual studio code
+## PHP

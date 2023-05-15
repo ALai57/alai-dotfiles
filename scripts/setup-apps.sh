@@ -12,9 +12,9 @@ function install_lein() {
 
 function install_doom(){
 	doom install
-	cp -r ~/.doom.d ~/.doom.d.old
+	cp -r ~/.config/doom ~/.config/doom.old
 	# Needs to point to the correct location for the `dotfiles` repo
-	sudo ln -s ~/spl/alai-dotfiles/.doom.d ~/.doom.d
+	sudo ln -s ~/spl/alai-dotfiles/.doom.d ~/.config/doom
 	doom sync
 }
 

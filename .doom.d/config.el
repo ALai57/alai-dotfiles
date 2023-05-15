@@ -23,7 +23,7 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "monospace" :size 16))
+(setq doom-font "Consolas 14")
 (setq org-directory "~/org/")       ;; MUST BE SET BEFORE ORG LOADS
 (setq display-line-numbers-type t)
 
@@ -391,41 +391,46 @@
       (init-monorepl current-repl))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; OKTA Login
+;; AWS SSO Login
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun access-key (str)
-  (when (string-match "ACCESS_KEY=\\(.*\\)\n" str)
-    (match-string 1 str)))
 
-(defun secret-key (str)
-  (when (string-match "SECRET_KEY=\\(.*\\)\n" str)
-    (match-string 1 str)))
+(setq AWS-PROFILES
+      '(("prod"      . (("account" . 820416642700) ("role" . "tribe_sso_permission_set")))
+        ("stage"     . (("account" . 820416642700) ("role" . "tribe_sso_permission_set")))
+        ("dev"       . (("account" . 941333304678) ("role" . "tribe_sso_permission_set")))
+        ("dev_admin" . (("account" . 941333304678) ("role" . "AWSPowerUser")))))
 
-(defun session-token (str)
-  (when (string-match "SESSION_TOKEN=\\(.*\\)\n" str)
-    (match-string 1 str)))
+(setq SSO-TOKEN-NAME
+      "~/.aws/sso/cache/7576c5160da8aa24c99cbadc0de700a7d4edd367.json")
 
-(defun set-aws-env-vars (str)
-  (let* ((ak  (access-key str))
-         (sk  (secret-key str))
-         (st  (session-token str)))
-    ;;(print (concat "ACCESS KEY" ak))
-    ;;(print (concat "SECRET KEY" sk))
-    ;;(print (concat "SESSION TOKEN" st))
-    (when (and ak sk st)
-      (setenv "AWS_ACCESS_KEY_ID" ak)
-      (setenv "AWS_SECRET_ACCESS_KEY" sk)
-      (setenv "AWS_SESSION_TOKEN" st)
-      (setenv "AWS_REGION" "us-east-1"))))
+;; Returns a hash map
+(defun get-access-token (filename)
+  (json-parse-string
+   (shell-command-to-string (format "cat %s" filename))))
 
-;;(set-aws-env-vars "SECRET_KEY=stuff\nACCESS_KEY=HELLOTHERE\nSESSION_TOKEN=Morethings\n")
+;; Returns a hash map
+(defun get-creds (account role token)
+  (json-parse-string
+   (shell-command-to-string
+    (format "aws --region us-east-1 sso get-role-credentials --account-id %s --role-name %s --access-token %s"
+            account role token))))
 
-(defun okta-login (env)
-  (let* ((default-directory "/tmp"))
-    (set-aws-env-vars
-     (shell-command-to-string (concat "~/bin/aws_login_emacs " env)))))
+;; Sets environment variables to be able to talk to AWS
+(defun aws-login (profile-name)
+  (shell-command-to-string (concat "aws sso login --profile " profile-name))
+  (let* ((props (cdr (assoc profile-name AWS-PROFILES)))
+         (acct  (cdr (assoc "account" props)))
+         (role  (cdr (assoc "role" props)))
+         (access-token (gethash "accessToken" (get-access-token SSO-TOKEN-NAME)))
+         (creds        (gethash "roleCredentials" (get-creds acct role access-token))))
+    (setenv "AWS_ACCESS_KEY_ID"     (gethash "accessKeyId" creds))
+    (setenv "AWS_SECRET_ACCESS_KEY" (gethash "secretAccessKey" creds))
+    (setenv "AWS_SESSION_TOKEN"     (gethash "sessionToken" creds))
+    (setenv "AWS_REGION" "us-east-1")
+    (print "Success setting AWS Environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN")
+    creds))
 
-;;(okta-login "stage")
+;; (setq EXAMPLE (aws-login "prod"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuring CIDER
@@ -455,7 +460,8 @@
          (okta-env    (gethash "OKTA_ENV" edn-hashmap)))
     (create-env-vars edn-hashmap)
     (when okta-env
-      (okta-login okta-env))))
+      (print (format "Logging in to SSO in %s" okta-env))
+      (aws-login okta-env))))
 
 ;;(apply-env-file "~/spl/stonehenge/splash/services/document_administration/.repl.document-administration.local.edn")
 
