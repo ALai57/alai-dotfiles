@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+prod_account=REPLACEME
+dev_account=REPLACEME
+role="tribe_sso_permission_set"
+token_name="64f3a92deadad760a4cbf8386ec4e7e29859da67"
+
+# Set your desired AWS account number and role
+case $1 in
+  prod)
+	account=$prod_account
+	;;
+  stage)
+	account=$prod_account
+	;;
+  dev)
+	account=$dev_account
+	;;
+  *)
+	echo "Failed, invalid environment. Must be in [prod, stage, dev]"
+	exit 1;
+esac
+
+aws sso login --profile $1
+
+token_file=~/.aws/sso/cache/$token_name.json
+token=$(cat $token_file | jq -r '.accessToken')
+
+creds=$(aws --region us-east-1 sso get-role-credentials \
+            --account-id $account \
+            --role-name $role \
+            --access-token $token)
+
+access_key=$(echo $creds | jq -r '.roleCredentials.accessKeyId')
+secret_key=$(echo $creds | jq -r '.roleCredentials.secretAccessKey')
+access_token=$(echo $creds | jq -r '.roleCredentials.sessionToken')
+
+echo "ACCESS_KEY=$access_key"
+echo "SECRET_KEY=$secret_key"
+echo "SESSION_TOKEN=$access_token"
