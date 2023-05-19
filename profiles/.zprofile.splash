@@ -1,7 +1,7 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 export PATH="/opt/homebrew/bin/:/Users/alai/bin/:$PATH"
-export PATH="/Users/alai/.composer/vendor/bin:$PATH"
+export PATH="/Users/alai/.composer/vendor/bin:/Users/alai/.config/emacs/bin/:$PATH"
 
 alias emacs='/Users/alai/spl/emacs/nextstep/Emacs.app/Contents/MacOS/Emacs'
 alias sc='source ~/.zprofile'

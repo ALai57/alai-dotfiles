@@ -69,6 +69,17 @@
    ?\] '("[ " . " ]")
    ?\} '("{ " . " }")))
 
+
+;; Unmap so it can be rebound
+(map! :n "C-=" nil)
+(map! :n "C--" nil)
+(map! :n "C-=" #'increase-font-size)
+(map! :n "C--" #'decrease-font-size)
+
+;;(define-key evil-normal-state-map "C-=" 'increase-font-size t)
+;;(define-key evil-normal-state-map "C--" 'decrease-font-size t)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CIDER
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

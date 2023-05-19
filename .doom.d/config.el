@@ -597,3 +597,40 @@
 (add-to-list 'display-buffer-alist
              '("*PLANTUML Preview*" display-buffer-in-direction)
              )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Font sizing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; From http://xahlee.info/emacs/emacs/emacs_set_default_font_size.html
+(setq FONT-SIZE 14)
+
+(defun set-font-size (size)
+  "Set default font globally.
+This command useful for making font large when you want to do video livestream.
+URL `http://xahlee.info/emacs/emacs/emacs_set_default_font_size.html'
+Version: 2021-07-26 2021-08-21 2022-08-05"
+  (set-frame-font
+   (cond
+    ((string-equal system-type "darwin")
+     (if (member "Consolas" (font-family-list)) (format "Consolas-%s" size) nil)
+     ;;(if (member "Menlo" (font-family-list)) (format "Menlo-%s" $fSize) nil)
+     )
+    ((string-equal system-type "gnu/linux")
+     (if (member "DejaVu Sans Mono" (font-family-list)) "DejaVu Sans Mono" nil))
+    (t nil))
+   t t))
+
+(defun increase-font-size ()
+  (interactive)
+  (setq FONT-SIZE (+ FONT-SIZE 2))
+  (set-font-size FONT-SIZE))
+
+(defun decrease-font-size ()
+  (interactive)
+  (if (< 4 (- FONT-SIZE 2))
+      (setq FONT-SIZE (- FONT-SIZE 2)))
+  (set-font-size FONT-SIZE))
+
+;;(increase-font-size)
+;;(decrease-font-size)
