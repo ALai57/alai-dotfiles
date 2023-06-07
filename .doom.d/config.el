@@ -377,7 +377,7 @@
 ;; Font sizing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; From http://xahlee.info/emacs/emacs/emacs_set_default_font_size.html
-(setq FONT-SIZE 14)
+(setq FONT-SIZE 12)
 
 (defun set-font-size (size)
   "Set default font globally.
@@ -391,7 +391,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
      ;;(if (member "Menlo" (font-family-list)) (format "Menlo-%s" $fSize) nil)
      )
     ((string-equal system-type "gnu/linux")
-     (if (member "DejaVu Sans Mono" (font-family-list)) "DejaVu Sans Mono" nil))
+     (if (member "DejaVu Sans Mono" (font-family-list)) (format "DejaVu Sans Mono-%s" size) nil))
     (t nil))
    t t))
 
