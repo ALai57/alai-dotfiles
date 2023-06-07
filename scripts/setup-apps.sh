@@ -20,7 +20,7 @@ function install_clojure() {
 function install_emacs() {
 	# Several other deps need to be install before running this (in the setup.sh script)
 	cd ~/dev/emacs
-	sudo CC="/usr/bin/gcc-10" ./autogen.sh && ./configure --with-native-compilation --with-mailutils
+	sudo CC="/usr/bin/gcc-10" ./autogen.sh && ./configure --with-native-compilation --with-mailutils --with-xwidgets
 	sudo make -j 4 && make install
 }
 

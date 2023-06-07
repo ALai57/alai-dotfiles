@@ -44,5 +44,13 @@ sudo apt-get install autoconf make texinfo build-essential install install-info 
 sudo apt-get install -y gcc-10 libgccjit0 libgccjit-10-dev libjansson4 libjansson-dev libgccjit-9-dev
 sudo apt-get install -y openjdk-17-jre	openjdk-16-jre
 
+# For Emacs xwidget support
+sudo apt-get install libgtk-3-dev libwebkit2gtk-4.0-dev
+
+# For Emacs tree sitter support
+# Also using https://github.com/casouri/tree-sitter-module for tree-sitter-grammars
+sudo apt-get install tree-sitter libtree-sitter-dev
+
+
 # Docker 
 sudo usermod -aG docker $USER

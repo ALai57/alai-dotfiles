@@ -69,6 +69,15 @@
    ?\] '("[ " . " ]")
    ?\} '("{ " . " }")))
 
+;; Unmap so it can be rebound
+(map! :n "C-=" nil)
+(map! :n "C--" nil)
+(map! :n "C-=" #'increase-font-size)
+(map! :n "C--" #'decrease-font-size)
+
+;;(define-key evil-normal-state-map "C-=" 'increase-font-size t)
+;;(define-key evil-normal-state-map "C--" 'decrease-font-size t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CIDER
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -179,6 +188,58 @@
       :n ", e f" #'ruby-send-block
       :n ", e l" #'ruby-send-last-sexp
       :n ", s s" #'inf-ruby-buffer
-      :n ", t n" #'cider-test-run-ns-tests
-      :n ", t p" #'cider-test-run-project-tests
+      :n ", t n" #'rspec-verify
+      :n ", t p" #'rspec-verify-all
+      :n "SPC m t t" #'rspec-verify-single
+      :n ", '"   #'inf-ruby)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ELisp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :map emacs-lisp-mode-map
+      :n ", e b" #'eval-buffer
+      :n ", e f" #'eval-defun
+      :n ", e l" #'eval-last-sexp)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remove keymap so it can be rebound
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :leader
+      ":" nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Leader key
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :leader
+      (:when (featurep! :completion ivy)
+       :desc "M-x" :nv "SPC" #'counsel-M-x))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ruby
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :after ruby-mode
+      :map ruby-mode-map
+      :n ", e b" #'ruby-send-buffer
+      :n ", e f" #'ruby-send-block
+      :n ", e l" #'ruby-send-last-sexp
+      :n ", s s" #'inf-ruby-buffer
+      :n ", t n" #'rspec-verify
+      :n ", t p" #'rspec-verify-all
+      :n "SPC m t t" #'rspec-verify-single
       :n ", '"   #'inf-ruby)
