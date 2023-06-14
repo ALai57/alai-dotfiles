@@ -62,6 +62,7 @@ brew install ripgrep
 # - Set key repeat speed https://support.apple.com/guide/mac-help/set-how-quickly-a-key-repeats-mchl0311bdb4/mac#:~:text=On%20your%20Mac%2C%20choose%20Apple,may%20need%20to%20scroll%20down.)&text=Drag%20the%20%E2%80%9CDelay%20until%20repeat,set%20how%20fast%20characters%20repeat.
 # - Set keybindings/shortcuts for Copy Paste Cut
 # - Symlink ZProfile ln -s /Users/alai/spl/alai-dotfiles/profiles/.zprofile.splash /Users/alai/.zprofile
+# - Rebind mission control if desired: Keyboard -> Keyboard Shortcuts -> Launchpad
 
 # Navigation
 # - Rebind CAPS LOCK to control https://appleinsider.com/inside/macos/tips/how-to-remap-caps-lock-control-option-command-keys-in-macos

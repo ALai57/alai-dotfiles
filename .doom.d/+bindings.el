@@ -223,4 +223,6 @@
       :n ", s q" #'psysh-quit
       ;;:n ", t n" #'psysh-test-run-ns-tests
       ;;:n ", t p" #'psysh-test-run-project-tests
+      :n "SPC m t t" #'phpunit-current-test
+      :n ", t n" #'phpunit-current-class
       :n ", '"   #'psysh)

@@ -27,6 +27,7 @@ alias rates-gen-test='bazel test //splash/services/rates_generation:tests'
 alias da-test='bazel test //splash/services/document_administration:tests'
 alias saus-test='bazel test //splash/services/saus:tests'
 alias crs-test='bazel test //splash/services/credit_risk:tests'
+alias e9y-test='bazel test //splash/services/e9y:tests'
 alias pf-test='bazel test //splash/services/password_fraud:tests'
 
 alias das-repl='bazel run //splash/ui/das:repl'
