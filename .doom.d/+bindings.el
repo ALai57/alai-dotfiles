@@ -53,6 +53,10 @@
       :desc "Lower (demote) buffer to popup" :g "w R" #'+popup/buffer
       :desc "Toggle popup" :g "`" #'+popup/toggle)
 
+;; Remove binding for +fold to use hs mode instead
+(define-key! evil-normal-state-map "z r" #'hs-show-all)
+(define-key! evil-normal-state-map "z m" #'hs-hide-level)
+
 (map!
  ;;:n "[S-return]" #'newline-and-indent
  :v "v" #'er/expand-region
@@ -226,3 +230,9 @@
       :n "SPC m t t" #'phpunit-current-test
       :n ", t n" #'phpunit-current-class
       :n ", '"   #'psysh)
+
+(map! :after lsp-mode
+      :map lsp-mode-map
+
+      ;; Go to Usages (g u)
+      :n "g u" #'lsp-find-references)
