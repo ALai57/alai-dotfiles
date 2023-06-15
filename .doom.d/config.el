@@ -634,3 +634,14 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 
 ;;(increase-font-size)
 ;;(decrease-font-size)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LSP mode helpers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun lsp-outgoing-called-children-hierarchy (args)
+  (interactive "P")
+  (lsp-treemacs-call-hierarchy t))
+
+(defun lsp-incoming-callers-hierarchy (args)
+  (interactive "P")
+  (lsp-treemacs-call-hierarchy nil))
