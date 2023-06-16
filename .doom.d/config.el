@@ -121,7 +121,6 @@
 
 (use-package treemacs-evil)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized themes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -255,22 +254,17 @@
   (add-to-list 'aggressive-indent-protected-commands 'undo-fu-only-undo))
 
 (after! clojure-mode
-  (setq clojure-indent-style 'always-align)
+  (setq clojure-indent-style 'always-indent)
   (define-clojure-indent
-    (PUT 2)
-    (POST 2)
-    (PATCH 2)
     (DELETE 2)
     (GET 2)
-    (addtest 1)
+    (PATCH 2)
+    (POST 2)
+    (PUT 2)
     (are 1)
-    (are-spec 1)
     (context 2)
-    (defsystest 1)
     (for-all 1)
-    (lz-post-lead 2)
     (middleware 1)
-    (op/p 1)
     (pending 1)
     (quick-check 1)
     (reg-event-db 1)
@@ -279,19 +273,6 @@
     (routes 0)
     (wrap-response 3)
     ))
-
-;;(defun cider-repl-in-new-frame ()
-  ;;(let ((new-frame (make-frame '((name . "REPL")
-                                 ;;;;(minibuffer . nil)
-                                 ;;)))
-        ;;(repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
-                      ;;(buffer-list)))))
-    ;;(select-frame-set-input-focus new-frame)
-    ;;(print (frame-first-window new-frame))
-    ;;(switch-to-buffer repl)))
-
-(setq cider-repl-pop-to-buffer-on-connect nil)
-;;(setq cider-connected-hook '(cider-repl-in-new-frame))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Environment variables
@@ -330,6 +311,23 @@
               :keymap counsel-find-file-map
               :caller 'select-env)))
 
+(defun always-indent! (params)
+  (interactive "P")
+  (setq clojure-indent-style 'always-indent))
+
+(defun always-align! (params)
+  (interactive "P")
+  (setq clojure-indent-style 'always-align))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Configuring CIDER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun kill-all-REPL-servers (params)
+  (interactive "P")
+  (mapcar #'delete-process (get-nrepl-server-processes)))
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -359,6 +357,11 @@
 (use-package lsp-java :init (add-hook 'java-mode-hook 'lsp))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Shell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(use-package direnv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization layers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load! "+bindings")
@@ -367,6 +370,11 @@
 
 (setq plantuml-jar-path "~/bin/plantuml-1.2022.8.jar")
 (setq plantuml-default-exec-mode 'jar)
+(setq plantuml-output-type "svg")
+;; Open in same window
+(add-to-list 'display-buffer-alist
+             '("*PLANTUML Preview*" display-buffer-in-direction)
+             )
 
 (use-package dap-mode
   :custom
@@ -408,3 +416,14 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 
 ;;(increase-font-size)
 ;;(decrease-font-size)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LSP mode helpers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun lsp-outgoing-called-children-hierarchy (args)
+  (interactive "P")
+  (lsp-treemacs-call-hierarchy t))
+
+(defun lsp-incoming-callers-hierarchy (args)
+  (interactive "P")
+  (lsp-treemacs-call-hierarchy nil))

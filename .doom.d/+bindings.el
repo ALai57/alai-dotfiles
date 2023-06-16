@@ -53,6 +53,10 @@
       :desc "Lower (demote) buffer to popup" :g "w R" #'+popup/buffer
       :desc "Toggle popup" :g "`" #'+popup/toggle)
 
+;; Remove binding for +fold to use hs mode instead
+(define-key! evil-normal-state-map "z r" #'hs-show-all)
+(define-key! evil-normal-state-map "z m" #'hs-hide-level)
+
 (map!
  ;;:n "[S-return]" #'newline-and-indent
  :v "v" #'er/expand-region
@@ -180,20 +184,6 @@
       )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Ruby
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(map! :after ruby-mode
-      :map ruby-mode-map
-      :n ", e b" #'ruby-send-buffer
-      :n ", e f" #'ruby-send-block
-      :n ", e l" #'ruby-send-last-sexp
-      :n ", s s" #'inf-ruby-buffer
-      :n ", t n" #'rspec-verify
-      :n ", t p" #'rspec-verify-all
-      :n "SPC m t t" #'rspec-verify-single
-      :n ", '"   #'inf-ruby)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ELisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (map! :map emacs-lisp-mode-map
@@ -243,3 +233,9 @@
       :n ", t p" #'rspec-verify-all
       :n "SPC m t t" #'rspec-verify-single
       :n ", '"   #'inf-ruby)
+
+(map! :after lsp-mode
+      :map lsp-mode-map
+
+      ;; Go to Usages (g u)
+      :n "g u" #'lsp-find-references)
