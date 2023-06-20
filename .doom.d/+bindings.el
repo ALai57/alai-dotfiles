@@ -11,7 +11,7 @@
 ;; Leader key
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (map! :leader
-      (:when (featurep! :completion ivy)
+      (:when (modulep! :completion ivy)
        :desc "M-x" :nv "SPC" #'counsel-M-x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35,7 +35,7 @@
 (define-key! evil-normal-state-map "C-n" nil)
 (map! :g "C-n" #'display-buffer-other-frame)
 (map! :leader
-      (:when (featurep! :completion ivy)
+      (:when (modulep! :completion ivy)
        :desc "Find file Other frame" :g "p o" #'projectile-find-file-other-frame))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -82,7 +82,8 @@
 
 ;;(define-key evil-normal-state-map "C-=" 'increase-font-size t)
 ;;(define-key evil-normal-state-map "C--" 'decrease-font-size t)
-
+(map! :g "M-j" #'evil-mc-make-cursor-move-next-line)
+(map! :g "M-k" #'evil-mc-make-cursor-move-prev-line)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CIDER

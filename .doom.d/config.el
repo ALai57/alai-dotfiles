@@ -94,7 +94,7 @@
   :defer t)
 (use-package! treemacs-persp
   ;;:defer t
-  :when (featurep! :ui workspaces)
+  :when (modulep! :ui workspaces)
   :after (treemacs persp-mode)
   :config
   (treemacs-set-scope-type 'Perspectives))
