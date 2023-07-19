@@ -54,3 +54,9 @@ sudo apt-get install tree-sitter libtree-sitter-dev
 
 # Docker 
 sudo usermod -aG docker $USER
+
+
+# Go
+sudo apt install golang-go
+# LSP language server
+go install golang.org/x/tools/gopls@latest

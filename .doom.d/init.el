@@ -99,7 +99,7 @@
        ;;data              ; config/data formats
        emacs-lisp        ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
-       ;;(go +lsp)         ; the hipster dialect
+       (go +lsp)         ; the hipster dialect
        (haskell +dante)  ; a language that's lazier than I am
        ;;json              ; At least it ain't XML
        (java +lsp)         ; the poster child for carpal tunnel syndrome
