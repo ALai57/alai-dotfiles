@@ -95,7 +95,7 @@
   :defer t)
 (use-package! treemacs-persp
   ;;:defer t
-  :when (featurep! :ui workspaces)
+  :when (modulep! :ui workspaces)
   :after (treemacs persp-mode)
   :config
   (treemacs-set-scope-type 'Perspectives))
@@ -345,11 +345,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Portal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun start-portal (params)
-  (interactive "P")
+  (interactive)
   (cider-nrepl-sync-request:eval "(require '[portal.api :as p])")
   (cider-nrepl-sync-request:eval "(add-tap #'p/submit)")
-  (cider-nrepl-sync-request:eval "(p/open {:window-title \"Portal taps\" :launcher :emacs})"))
+  (cider-nrepl-sync-request:eval "(p/open {:window-title \"Portal taps\"})"))
+
+(add-hook 'cider-connected-hook
+          (lambda ()
+            (start-portal nil)))
+
+;;(setq cider-jack-in-auto-inject-clojure "1.12.0-alpha3")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java
@@ -420,10 +427,15 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LSP mode helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun lsp-outgoing-called-children-hierarchy (args)
-  (interactive "P")
+(defun lsp-outgoing-called-children-hierarchy ()
+  (interactive)
   (lsp-treemacs-call-hierarchy t))
 
-(defun lsp-incoming-callers-hierarchy (args)
-  (interactive "P")
+(defun lsp-incoming-callers-hierarchy ()
+  (interactive)
   (lsp-treemacs-call-hierarchy nil))
+
+(lsp-treemacs--get-xrefs-in-file)
+
+
+(require 'dap-dlv-go)

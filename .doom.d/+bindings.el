@@ -1,6 +1,5 @@
 ;;; ~/.doom.d/+bindings.el -*- lexical-binding: t; -*-
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove keymap so it can be rebound
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -11,7 +10,7 @@
 ;; Leader key
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (map! :leader
-      (:when (featurep! :completion ivy)
+      (:when (modulep! :completion ivy)
        :desc "M-x" :nv "SPC" #'counsel-M-x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35,7 +34,7 @@
 (define-key! evil-normal-state-map "C-n" nil)
 (map! :g "C-n" #'display-buffer-other-frame)
 (map! :leader
-      (:when (featurep! :completion ivy)
+      (:when (modulep! :completion ivy)
        :desc "Find file Other frame" :g "p o" #'projectile-find-file-other-frame))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -120,7 +119,16 @@
 
 (defun my-cider-debug-toggle-insert-state ()
   (if cider--debug-mode    ;; Checks if you're entering the debugger
-      (evil-normal-state)  ;; Otherwise, turn on normal-state
+      (progn
+        (define-key cider--debug-mode-map "h" nil)
+        (define-key cider--debug-mode-map "H" 'cider-debug-move-here)
+        (define-key cider--debug-mode-map "i" nil)
+        (define-key cider--debug-mode-map "I" 'evil-collection-cider-debug-in)
+        (define-key cider--debug-mode-map "j" nil)
+        (define-key cider--debug-mode-map "J" 'evil-collection-cider-debug-inject)
+        (define-key cider--debug-mode-map "l" nil)
+        (define-key cider--debug-mode-map "L" 'evil-collection-cider-debug-inspect)
+        (evil-normal-state))  ;; Otherwise, turn on normal-state
     (evil-insert-state)    ;; If so, turn on evil-insert-state
     ))
 
@@ -190,35 +198,6 @@
       :n ", e b" #'eval-buffer
       :n ", e f" #'eval-defun
       :n ", e l" #'eval-last-sexp)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Remove keymap so it can be rebound
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(map! :leader
-      ":" nil)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Leader key
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(map! :leader
-      (:when (featurep! :completion ivy)
-       :desc "M-x" :nv "SPC" #'counsel-M-x))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ruby
