@@ -218,3 +218,18 @@
 
       ;; Go to Usages (g u)
       :n "g u" #'lsp-find-references)
+
+
+(map! :after go-mode
+      :map go-mode-map
+      :n "SPC m t t" #'+go-fp/test-single
+      :n ", d d" #'dap-debug
+      :n ", d a" #'dap-breakpoint-add
+      :n ", d x" #'dap-breakpoint-delete
+      :n ", d X" #'dap-breakpoint-delete-all
+      :n ", d c" #'dap-continue
+      :n ", d o" #'dap-step-out
+      :n ", d i" #'dap-step-in
+      :n ", d n" #'dap-next
+      :n ", d s q" #'dap-disconnect
+      )

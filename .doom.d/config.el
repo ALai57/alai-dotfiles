@@ -435,7 +435,61 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
   (interactive)
   (lsp-treemacs-call-hierarchy nil))
 
-(lsp-treemacs--get-xrefs-in-file)
+;;(lsp-treemacs--get-xrefs-in-file)
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Go!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'dap-dlv-go)
+
+;; Freshpaint
+(defun destinations-suite? (source-line)
+  "Expects `source-line' to be the line of text where the cursor is currently located
+  Check if a test suite is for the destinations suite in Perfalytics."
+  (string-match-p (regexp-quote "DestinationsSuite") source-line))
+
+(defun full-test-name (source-line current-test-name)
+  "Expects `source-line' to be the line of text where the cursor is currently located
+  Derive the name of the test from the test's function signature"
+  (cond
+   ((destinations-suite? source-line) (format "TestDestinations/%s" current-test-name))
+   (t                                 current-test-name)))
+
+(defun +go-fp/test-single ()
+  "Run single test at point."
+  (interactive)
+  (if (string-match "_test\\.go" buffer-file-name)
+      (save-excursion
+        (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+        (let* ((current-test-name (match-string-no-properties 2))
+               (source-line       (thing-at-point 'line t))
+               (full-name         (full-test-name source-line current-test-name)))
+          (+go--run-tests (format "-run='%s'" full-name))))
+    (error "Must be in a _test.go file")))
+
+
+(setq dap-auto-configure-mode t)
+
+;; There is something wrong with the current implementation of this macro. Trying to see
+;; if I can manually edit it...
+(defmacro lsp-treemacs-wcb-unless-killed (buffer &rest body)
+  "`with-current-buffer' unless buffer killed."
+  (declare (indent 1) (debug t))
+  `(when (buffer-live-p (get-buffer buffer))
+     (with-current-buffer buffer
+       @body)))
+
+;; Debugging workflow:
+;;
+;; Delete all breakpoints `, d D'
+;; Insert any new breakpoints you want `, d a'
+;; Navigate to a test that has a function signature of `(t *testing.T)`
+;; Run the debugger `, d d'
+;; Step through as you'd like
+;;   `, d n' - step over
+;;   `, d i' - step in
+;;   `, d o' - step out
+;;
+;; Use DAP REPL to inspect variables. Set variable length using `dap-ui-variable-length'
+;; https://github.com/emacs-lsp/dap-mode/issues/452
