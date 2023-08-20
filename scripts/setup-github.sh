@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/spl
+cd ~/code
 
 # My apps
 #git clone git@github.com:ALai57/alai-dotfiles.git
@@ -21,10 +21,6 @@ git clone git@github.com:metosin/reitit.git
 git clone git@github.com:metosin/malli.git
 git clone git@github.com:thheller/shadow-cljs.git
 
-# Splash
-git clone git@github.com:SplashFinancial/Website.git
-git clone git@github.com:SplashFinancial/stonehenge.git
-
 # May need to move any existing .emacs.d folders to allow this 
-#git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 
