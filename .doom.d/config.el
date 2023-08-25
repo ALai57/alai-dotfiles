@@ -10,6 +10,7 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+(require 'shortdoc)
 (setq user-full-name "Andrew Lai"
       user-mail-address "andrew.s.lai5@gmail.com")
 
@@ -23,7 +24,7 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font "Consolas 14")
+(setq doom-font (font-spec :family "monospace" :size 16))
 (setq org-directory "~/org/")       ;; MUST BE SET BEFORE ORG LOADS
 (setq display-line-numbers-type t)
 
@@ -266,181 +267,16 @@
     (middleware 1)
     (pending 1)
     (quick-check 1)
+    (reg-event-db 1)
+    (reg-event-fx 1)
     (route-middleware 1)
     (routes 0)
-    (with-fake-routes 1)
     (wrap-response 3)
     ))
 
-
-(defun always-indent! (params)
-  (interactive "P")
-  (setq clojure-indent-style 'always-indent))
-
-(defun always-align! (params)
-  (interactive "P")
-  (setq clojure-indent-style 'always-align))
-
-
-(set-formatter! 'cljstyle "cljstyle pipe" :modes '(clojure-mode))
-
-
-;;(defun cider-repl-in-new-frame ()
-  ;;(let ((new-frame (make-frame '((name . "REPL")
-                                 ;;;;(minibuffer . nil)
-                                 ;;)))
-        ;;(repl (car (seq-filter (lambda (buf) (string-prefix-p "*cider" (buffer-name buf)))
-                      ;;(buffer-list)))))
-    ;;(select-frame-set-input-focus new-frame)
-    ;;(print (frame-first-window new-frame))
-    ;;(switch-to-buffer repl)))
-;;
-;;(setq cider-repl-pop-to-buffer-on-connect nil)
-;;(setq cider-connected-hook '(cider-repl-in-new-frame))
-
-;; Teach CIDER to remember the monorepo nREPL
-;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Constants
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Set me to your local `stonehenge' repo!
-(setq STONEHENGE-PATH
-      "~/spl/stonehenge/")
-
-(setq MONOREPO-CONN
-      '(:project "stonehenge" :host "localhost" :port "7888"))
-
-(setq MONOREPO-CLJS-CONN
-      '(:project "stonehenge-cljs" :host "localhost" :port "7889"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Helpers for parsing the connection
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun ->known-endpoint (conn)
-  (mapcar (lambda (x) (plist-get conn x))
-          (list :project :host :port)))
-
-(defun ->conn-string (conn)
-  (string-join (->known-endpoint conn) ":"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Helpers for staring the monorepl
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun init-monorepl (current-repl)
-  ;; Need to set the current buffer so the REPL output gets piped to the right place
-  (with-current-buffer current-repl
-    (print "Starting MonoREPL....")
-    (cider-nrepl-request:eval "(start)" (cider-repl-init-eval-handler nil))
-    (cider-nrepl-request:eval "(println ::repl-ready)" (cider-repl-init-eval-handler nil))))
-
-(defun monorepl? (b)
-  (string-match (->conn-string MONOREPO-CONN) (buffer-name b)))
-
-(defun cider-init-hook ()
-
-  ;; override cider's nrepl session lookup dependency, to cover relative maven path to support Stonehenge
-  ;; this is needed because orchard, the library cider-nrepl middleware depends on, will fetch symbol location from different path than classpath.
-  ;; Because of that, once inside the dependency library jar, cider-find-var no longer works because it can't find the nrepl session since the filename does not fully match with classpath fetched from stonehenge nrepl session.
-  ;; To fix it, the default cider function "sesman-friendly-session-p" is overridden to not check exact classpath to filepath match, but instead only the maven substring.
-  ;; example:
-  ;; file location found from repl:
-  ;; "/private/var/tmp/_bazel_ywei/382bc82a66d87a56221cef203b9cc9cb/external/maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498/api-0.8.498.jar:cognitect/aws/client/api.clj"
-  ;; classpath returned from repl:
-  ;; "/private/var/tmp/_bazel_ywei/382bc82a66d87a56221cef203b9cc9cb/execroot/stonehenge/bazel-out/darwin-fastbuild/bin/development/repl/repl.runfiles/maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498/"
-  ;;
-  ;; default cider only checks prefix, where we will attempt to match "maven/v1/https/repo1.maven.org/maven2/com/cognitect/aws/api/0.8.498" part only.
-  (defun try-trim-maven-path (path)
-    (let ((maven-index (string-match "maven" path)))
-      (if maven-index
-          (substring path maven-index (length path))
-        path)))
-
-  (cl-defmethod sesman-friendly-session-p ((_system (eql CIDER)) session)
-    "Check if SESSION is a friendly session."
-    (setcdr session (seq-filter #'buffer-live-p (cdr session)))
-    (when-let* ((repl (cadr session))
-                (proc (get-buffer-process repl))
-                (file (file-truename (or (buffer-file-name) default-directory))))
-      ;; With avfs paths look like /path/to/.avfs/path/to/some.jar#uzip/path/to/file.clj
-      (when (string-match-p "#uzip" file)
-        (let ((avfs-path (directory-file-name (expand-file-name (or (getenv "AVFSBASE")  "~/.avfs/")))))
-          (setq file (replace-regexp-in-string avfs-path "" file t t))))
-      (when (process-live-p proc)
-        (let* ((classpath (or (process-get proc :cached-classpath)
-                              (let ((cp (with-current-buffer repl
-                                          (cider-classpath-entries))))
-                                (process-put proc :cached-classpath cp)
-                                cp)))
-               (classpath-roots (or (process-get proc :cached-classpath-roots)
-                                    (let ((cp (thread-last classpath
-                                                           (seq-filter (lambda (path) (not (string-match-p "\\.jar$" path))))
-                                                           (mapcar #'file-name-directory)
-                                                           (seq-remove  #'null))))
-                                      (process-put proc :cached-classpath-roots cp)
-                                      cp))))
-          (or (seq-find (lambda (path) (string-match path file))
-                        (mapcar 'try-trim-maven-path classpath))
-              (seq-find (lambda (path) (string-match path file))
-                        (mapcar 'try-trim-maven-path classpath-roots)))))))
-
-  ;; initialize monorepl after starting cider
-  (let ((current-repl (cider-current-repl nil 'ensure)))
-    (when (monorepl? current-repl)
-      (init-monorepl current-repl))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; AWS SSO Login
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq AWS-PROFILES
-      '(("prod"      . (("account" . 820416642700) ("role" . "tribe_sso_permission_set")))
-        ("stage"     . (("account" . 820416642700) ("role" . "tribe_sso_permission_set")))
-        ("dev"       . (("account" . 941333304678) ("role" . "tribe_sso_permission_set")))
-        ("dev_admin" . (("account" . 941333304678) ("role" . "AWSPowerUser")))))
-
-(setq SSO-TOKEN-NAME
-      "~/.aws/sso/cache/7576c5160da8aa24c99cbadc0de700a7d4edd367.json")
-
-;; Returns a hash map
-(defun get-access-token (filename)
-  (json-parse-string
-   (shell-command-to-string (format "cat %s" filename))))
-
-;; Returns a hash map
-(defun get-creds (account role token)
-  (json-parse-string
-   (shell-command-to-string
-    (format "aws --region us-east-1 sso get-role-credentials --account-id %s --role-name %s --access-token %s"
-            account role token))))
-
-;; Sets environment variables to be able to talk to AWS
-(defun aws-login (profile-name)
-  (shell-command-to-string (concat "aws sso login --profile " profile-name))
-  (let* ((props (cdr (assoc profile-name AWS-PROFILES)))
-         (acct  (cdr (assoc "account" props)))
-         (role  (cdr (assoc "role" props)))
-         (access-token (gethash "accessToken" (get-access-token SSO-TOKEN-NAME)))
-         (creds        (gethash "roleCredentials" (get-creds acct role access-token))))
-    (setenv "AWS_ACCESS_KEY_ID"     (gethash "accessKeyId" creds))
-    (setenv "AWS_SECRET_ACCESS_KEY" (gethash "secretAccessKey" creds))
-    (setenv "AWS_SESSION_TOKEN"     (gethash "sessionToken" creds))
-    (setenv "AWS_REGION" "us-east-1")
-    (print "Success setting AWS Environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN")
-    creds))
-
-;; (setq EXAMPLE (aws-login "prod"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Configuring CIDER
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq cider-known-endpoints
-      (list (->known-endpoint MONOREPO-CONN)
-            (->known-endpoint MONOREPO-CLJS-CONN)))
-
-(setq cider-connected-hook '(cider-init-hook))
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Environment variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package parseedn)
 
@@ -456,14 +292,7 @@
     (buffer-string)))
 
 (defun apply-env-file (f)
-  (let* ((edn-hashmap (parseedn-read-str (get-string-from-file f)))
-         (okta-env    (gethash "OKTA_ENV" edn-hashmap)))
-    (create-env-vars edn-hashmap)
-    (when okta-env
-      (print (format "Logging in to SSO in %s" okta-env))
-      (aws-login okta-env))))
-
-;;(apply-env-file "~/spl/stonehenge/splash/services/document_administration/.repl.document-administration.local.edn")
+  (create-env-vars (parseedn-read-str (get-string-from-file f))))
 
 (defun select-env (params)
   (interactive "P")
@@ -482,68 +311,18 @@
               :keymap counsel-find-file-map
               :caller 'select-env)))
 
-(defun cider-connect-stonehenge-cljs (params)
+(defun always-indent! (params)
   (interactive "P")
-  ;; Open a browser that connects a JS environment to the REPL
-  (browse-url "http://localhost:9630")
-  (browse-url "http://localhost:1337")
-  (browse-url "http://localhost:9630/repl-js/browser-repl")
-  (cider-connect-cljs (list :host           "localhost"
-                            :port           7889
-                            :cljs-repl-type 'shadow-select)))
+  (setq clojure-indent-style 'always-indent))
 
-;;(select-env nil)
-
-(defun cider-jack-in-stonehenge (params)
-  "Start an nREPL server for the stonehenge project and connect to it."
+(defun always-align! (params)
   (interactive "P")
-  (select-env params)
-  (let ((params (thread-first params
-                              (cider--update-project-dir)
-                              (cider--check-existing-session)
-                              (cider--update-jack-in-cmd))))
-    (nrepl-start-server-process
-     STONEHENGE-PATH
-     (concat STONEHENGE-PATH "repl")
-     (lambda (server-buffer)
-       (cider-connect-sibling-clj params server-buffer)))))
+  (setq clojure-indent-style 'always-align))
 
-(defun get-nrepl-server-processes ()
-  (seq-filter (lambda (proc)
-                (string-match-p "nrepl-server" (process-name proc)))
-              (process-list)))
 
-(defun cider-jack-in-das (params)
-  "Start an nREPL server for the stonehenge project and connect to it."
-  (interactive "P")
-  (let ((params (thread-first params
-                              (cider--update-project-dir)
-                              (cider--check-existing-session)
-                              (cider--update-jack-in-cmd))))
-    (nrepl-start-server-process
-     STONEHENGE-PATH
-     "bazel run //splash/ui/das:repl"
-     (lambda (server-buffer)
-       (setq cider-shadow-default-options ":browser-repl")
-       (sit-for 20)
-       (cider-connect-stonehenge-cljs params)
-       ))))
-
-(defun cider-jack-in-lpm (params)
-  "Start an nREPL server for the stonehenge project and connect to it."
-  (interactive "P")
-  (let ((params (thread-first params
-                              (cider--update-project-dir)
-                              (cider--check-existing-session)
-                              (cider--update-jack-in-cmd))))
-    (nrepl-start-server-process
-     STONEHENGE-PATH
-     "bazel run //splash/ui/lpm:repl"
-     (lambda (server-buffer)
-       (setq cider-shadow-default-options ":browser-repl")
-       (sit-for 20)
-       (cider-connect-stonehenge-cljs params)
-       ))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Configuring CIDER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun kill-all-REPL-servers (params)
   (interactive "P")
@@ -566,12 +345,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Portal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun start-portal (params)
-  (interactive "P")
+  (interactive)
   (cider-nrepl-sync-request:eval "(require '[portal.api :as p])")
   (cider-nrepl-sync-request:eval "(add-tap #'p/submit)")
-  (cider-nrepl-sync-request:eval "(p/open {:window-title \"Portal taps\" :launcher :emacs})"))
+  (cider-nrepl-sync-request:eval "(p/open {:window-title \"Portal taps\"})"))
 
+(add-hook 'cider-connected-hook
+          (lambda ()
+            (start-portal nil)))
+
+;;(setq cider-jack-in-auto-inject-clojure "1.12.0-alpha3")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java
@@ -590,7 +375,7 @@
 (load! "+treemacs")
 ;;(load! "lisp/fourclojure")
 
-(setq plantuml-jar-path "~/bin/plantuml.jar")
+(setq plantuml-jar-path "~/bin/plantuml-1.2022.8.jar")
 (setq plantuml-default-exec-mode 'jar)
 (setq plantuml-output-type "svg")
 ;; Open in same window
@@ -598,12 +383,16 @@
              '("*PLANTUML Preview*" display-buffer-in-direction)
              )
 
+(use-package dap-mode
+  :custom
+  (dap-auto-configure-features '(sessions locals tooltip repl)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font sizing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; From http://xahlee.info/emacs/emacs/emacs_set_default_font_size.html
-(setq FONT-SIZE 14)
+(setq FONT-SIZE 12)
 
 (defun set-font-size (size)
   "Set default font globally.
@@ -617,7 +406,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
      ;;(if (member "Menlo" (font-family-list)) (format "Menlo-%s" $fSize) nil)
      )
     ((string-equal system-type "gnu/linux")
-     (if (member "DejaVu Sans Mono" (font-family-list)) "DejaVu Sans Mono" nil))
+     (if (member "DejaVu Sans Mono" (font-family-list)) (format "DejaVu Sans Mono-%s" size) nil))
     (t nil))
    t t))
 
@@ -638,10 +427,69 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LSP mode helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun lsp-outgoing-called-children-hierarchy (args)
-  (interactive "P")
+(defun lsp-outgoing-called-children-hierarchy ()
+  (interactive)
   (lsp-treemacs-call-hierarchy t))
 
-(defun lsp-incoming-callers-hierarchy (args)
-  (interactive "P")
+(defun lsp-incoming-callers-hierarchy ()
+  (interactive)
   (lsp-treemacs-call-hierarchy nil))
+
+;;(lsp-treemacs--get-xrefs-in-file)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Go!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'dap-dlv-go)
+
+;; Freshpaint
+(defun destinations-suite? (source-line)
+  "Expects `source-line' to be the line of text where the cursor is currently located
+  Check if a test suite is for the destinations suite in Perfalytics."
+  (string-match-p (regexp-quote "DestinationsSuite") source-line))
+
+(defun full-test-name (source-line current-test-name)
+  "Expects `source-line' to be the line of text where the cursor is currently located
+  Derive the name of the test from the test's function signature"
+  (cond
+   ((destinations-suite? source-line) (format "TestDestinations/%s" current-test-name))
+   (t                                 current-test-name)))
+
+(defun +go-fp/test-single ()
+  "Run single test at point."
+  (interactive)
+  (if (string-match "_test\\.go" buffer-file-name)
+      (save-excursion
+        (re-search-backward "^func[ ]+\\(([[:alnum:]]*?[ ]?[*]?[[:alnum:]]+)[ ]+\\)?\\(Test[[:alnum:]_]+\\)(.*)")
+        (let* ((current-test-name (match-string-no-properties 2))
+               (source-line       (thing-at-point 'line t))
+               (full-name         (full-test-name source-line current-test-name)))
+          (+go--run-tests (format "-run='%s'" full-name))))
+    (error "Must be in a _test.go file")))
+
+
+(setq dap-auto-configure-mode t)
+
+;; There is something wrong with the current implementation of this macro. Trying to see
+;; if I can manually edit it...
+(defmacro lsp-treemacs-wcb-unless-killed (buffer &rest body)
+  "`with-current-buffer' unless buffer killed."
+  (declare (indent 1) (debug t))
+  `(when (buffer-live-p (get-buffer buffer))
+     (with-current-buffer buffer
+       @body)))
+
+;; Debugging workflow:
+;;
+;; Delete all breakpoints `, d D'
+;; Insert any new breakpoints you want `, d a'
+;; Navigate to a test that has a function signature of `(t *testing.T)`
+;; Run the debugger `, d d'
+;; Step through as you'd like
+;;   `, d n' - step over
+;;   `, d i' - step in
+;;   `, d o' - step out
+;;
+;; Use DAP REPL to inspect variables. Set variable length using `dap-ui-variable-length'
+;; https://github.com/emacs-lsp/dap-mode/issues/452

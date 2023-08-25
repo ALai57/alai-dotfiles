@@ -1,6 +1,5 @@
 ;;; ~/.doom.d/+bindings.el -*- lexical-binding: t; -*-
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove keymap so it can be rebound
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -73,7 +72,6 @@
    ?\] '("[ " . " ]")
    ?\} '("{ " . " }")))
 
-
 ;; Unmap so it can be rebound
 (map! :n "C-=" nil)
 (map! :n "C--" nil)
@@ -82,8 +80,6 @@
 
 ;;(define-key evil-normal-state-map "C-=" 'increase-font-size t)
 ;;(define-key evil-normal-state-map "C--" 'decrease-font-size t)
-(map! :g "M-j" #'evil-mc-make-cursor-move-next-line)
-(map! :g "M-k" #'evil-mc-make-cursor-move-prev-line)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CIDER
@@ -123,7 +119,16 @@
 
 (defun my-cider-debug-toggle-insert-state ()
   (if cider--debug-mode    ;; Checks if you're entering the debugger
-      (evil-normal-state)  ;; Otherwise, turn on normal-state
+      (progn
+        (define-key cider--debug-mode-map "h" nil)
+        (define-key cider--debug-mode-map "H" 'cider-debug-move-here)
+        (define-key cider--debug-mode-map "i" nil)
+        (define-key cider--debug-mode-map "I" 'evil-collection-cider-debug-in)
+        (define-key cider--debug-mode-map "j" nil)
+        (define-key cider--debug-mode-map "J" 'evil-collection-cider-debug-inject)
+        (define-key cider--debug-mode-map "l" nil)
+        (define-key cider--debug-mode-map "L" 'evil-collection-cider-debug-inspect)
+        (evil-normal-state))  ;; Otherwise, turn on normal-state
     (evil-insert-state)    ;; If so, turn on evil-insert-state
     ))
 
@@ -176,64 +181,55 @@
 (define-key evil-normal-state-map "gow" '+lookup/definition-other-window)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PHP
+;; Python state
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :after python
+      :map python-mode-map
+      :n ", e b" #'python-shell-send-buffer
+      :n ", e f" #'python-shell-send-defun
+      :n ", e l" #'python-shell-send-statement
+      :n ", '" #'+python/open-repl
+      )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ELisp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :map emacs-lisp-mode-map
+      :n ", e b" #'eval-buffer
+      :n ", e f" #'eval-defun
+      :n ", e l" #'eval-last-sexp)
 
-(defun find-php-header ()
-  (interactive)
-  (re-search-forward "<?php")
-  (evil-next-line))
-
-(defun psysh-eval-buffer ()
-  (interactive)
-  ;; like save-excursion, but we need to set the marker type to 't
-  (let ((m (point-marker)))
-    (mark-whole-buffer)
-    (find-php-header)
-    (psysh-eval-region (mark) (point))
-    (goto-char m)
-    (doom/escape)))
-
-(defun psysh-eval-string (s)
-  "Evalute PHP code as a string"
-  (interactive)
-  (let ((buf (psysh--make-process)))
-    (comint-send-string buf s)))
-
-(defun get-namespace ()
-  (let ((str (buffer-substring-no-properties 1 (buffer-size))))
-    (when (string-match "namespace \\(.*\\);" str)
-      (downcase (match-string 1 str)))))
-
-(defun psysh-quit ()
-  (interactive)
-  (psysh-eval-string "exit\n"))
-
-(defun psysh-eval-line ()
-  (interactive)
-  ;; like save-excursion, but we need to set the marker type to 't
-  (let ((m (point-marker)))
-    (evil-visual-line)
-    (point)
-    (psysh-eval-region (point-at-bol) (1+ (point-at-eol)))
-    (goto-char m)
-    (doom/escape)))
-
-(map! :after php-mode
-      :map php-mode-map
-      :n ", e b" #'psysh-eval-buffer
-      ;;:n ", e f" #'psysh-eval-defun-at-point
-      :n ", e l" #'psysh-eval-line
-      :n ", s q" #'psysh-quit
-      ;;:n ", t n" #'psysh-test-run-ns-tests
-      ;;:n ", t p" #'psysh-test-run-project-tests
-      :n "SPC m t t" #'phpunit-current-test
-      :n ", t n" #'phpunit-current-class
-      :n ", '"   #'psysh)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ruby
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(map! :after ruby-mode
+      :map ruby-mode-map
+      :n ", e b" #'ruby-send-buffer
+      :n ", e f" #'ruby-send-block
+      :n ", e l" #'ruby-send-last-sexp
+      :n ", s s" #'inf-ruby-buffer
+      :n ", t n" #'rspec-verify
+      :n ", t p" #'rspec-verify-all
+      :n "SPC m t t" #'rspec-verify-single
+      :n ", '"   #'inf-ruby)
 
 (map! :after lsp-mode
       :map lsp-mode-map
 
       ;; Go to Usages (g u)
       :n "g u" #'lsp-find-references)
+
+
+(map! :after go-mode
+      :map go-mode-map
+      :n "SPC m t t" #'+go-fp/test-single
+      :n ", d d" #'dap-debug
+      :n ", d a" #'dap-breakpoint-add
+      :n ", d x" #'dap-breakpoint-delete
+      :n ", d X" #'dap-breakpoint-delete-all
+      :n ", d c" #'dap-continue
+      :n ", d o" #'dap-step-out
+      :n ", d i" #'dap-step-in
+      :n ", d n" #'dap-next
+      :n ", d s q" #'dap-disconnect
+      )

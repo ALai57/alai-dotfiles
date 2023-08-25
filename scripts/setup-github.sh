@@ -24,3 +24,8 @@ git clone git@github.com:thheller/shadow-cljs.git
 # May need to move any existing .emacs.d folders to allow this 
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 
+
+# Freshpaint
+git clone git@github.com:freshpaint-io/perfalytics.git
+git clone git@github.com:freshpaint-io/analytics.js.git
+git clone git@github.com:freshpaint-io/perfalytics-js.git
