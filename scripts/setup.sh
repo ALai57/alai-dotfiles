@@ -40,7 +40,23 @@ brew install ripgrep
 # Create SSH for GH
 #ssh-keygen -t rsa
 
-# Manual 
+
+# Task
+brew install go-task/tap/go-task
+
+# Go linter
+# binary will be $(go env GOPATH)/bin/golangci-lint
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
+
+golangci-lint --version
+
+# NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+
+
+# Manual
+# - Notion.so desktop app https://www.notion.so/desktop
+# - Displaylink manager  https://www.synaptics.com/products/displaylink-graphics/downloads/macos-connectivity-1.9?filetype=exe
 # - Anaconda
 # - Chrome
 #   - Reset Chrome keybindings https://superuser.com/questions/1293474/osx-chrome-use-ctrl-key-based-shortcuts-instead-of-command-key-based
