@@ -31,7 +31,7 @@
 (package! treemacs-persp)
 ;;(package! org-bullets)
 ;;(package! color)
-(package! emacs-bazel-mode :recipe (:host github :repo "bazelbuild/emacs-bazel-mode"))
+;;(package! emacs-bazel-mode :recipe (:host github :repo "bazelbuild/emacs-bazel-mode"))
 
 ;; To install a package directly from a particular repo, you'll need to specify
 ;; a `:recipe'. You'll find documentation on what `:recipe' accepts here:

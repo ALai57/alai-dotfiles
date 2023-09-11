@@ -49,7 +49,7 @@
        (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
-       ;;(format +onsave)  ; automated prettiness
+       (format +onsave)  ; automated prettiness
        ;;lispy             ; vim for lisp, for people who don't like vim
        multiple-cursors  ; editing in many places at once
        snippets          ; my elves. They type so I don't have to
@@ -74,7 +74,7 @@
        ;;grammar           ; tasing grammar mistake every you make
 
        :tools
-       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       debugger          ; FIXME stepping through code, to help you add bugs
        direnv
        ;;docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -100,9 +100,9 @@
        ;;data              ; config/data formats
        emacs-lisp        ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
-       ;;(go +lsp)         ; the hipster dialect
+       (go +lsp)         ; the hipster dialect
        (haskell +dante)  ; a language that's lazier than I am
-       ;;json              ; At least it ain't XML
+       json              ; At least it ain't XML
        (java +lsp)         ; the poster child for carpal tunnel syndrome
        javascript        ; all(hope(abandon(ye(who(enter(here))))))
        ;;kotlin            ; a better, slicker Java(Script)
