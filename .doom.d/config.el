@@ -254,7 +254,7 @@
   (add-to-list 'aggressive-indent-protected-commands 'undo-fu-only-undo))
 
 (after! clojure-mode
-  (setq clojure-indent-style 'always-indent)
+  (setq clojure-indent-style 'always-align)
   (define-clojure-indent
     (DELETE 2)
     (GET 2)
@@ -327,6 +327,52 @@
 (defun kill-all-REPL-servers (params)
   (interactive "P")
   (mapcar #'delete-process (get-nrepl-server-processes)))
+
+
+(use-package parseedn)
+
+(defun create-env-vars (map)
+  (maphash (lambda (k v)
+             (setenv k v))
+           map))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun apply-env-file (f)
+  (let* ((edn-hashmap (parseedn-read-str (get-string-from-file f))))
+    (create-env-vars edn-hashmap)))
+
+;;(apply-env-file "~/code/kaleidoscope/.repl.aws.edn")
+
+(defun select-env (params)
+  (interactive "P")
+  (let ((default-directory (projectile-project-root))
+        (counsel-find-file-ignore-regexp nil))
+    (ivy-read "Select environment: " #'read-file-name-internal
+              :matcher #'counsel--find-file-matcher
+              :predicate (lambda (x) (string-match-p "^\\.repl\\..*[^/]$" x))
+              :initial-input nil
+              :action (lambda (f)
+                        (print (format "Applying %s environment configuration." f))
+                        (apply-env-file f))
+              :preselect (counsel--preselect-file)
+              :require-match t
+              :history 'file-name-history
+              :keymap counsel-find-file-map
+              :caller 'select-env)))
+
+;;(select-env nil)
+
+(defun cider-jack-in+ (params)
+  "Start an nREPL server for the stonehenge project and connect to it."
+  (interactive "P")
+  (select-env params)
+  (cider-jack-in params))
+
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EDiff

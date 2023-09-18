@@ -53,6 +53,9 @@ golangci-lint --version
 # NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 
+# Direnv - directory-specific environment variables
+brew install direnv
+eval "$(direnv hook zsh)"
 
 # Manual
 # - Notion.so desktop app https://www.notion.so/desktop

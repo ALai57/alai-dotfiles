@@ -115,7 +115,7 @@
       :n ", s q" #'cider-quit
       :n ", t n" #'cider-test-run-ns-tests
       :n ", t p" #'cider-test-run-project-tests
-      :n ", '" #'cider-jack-in-clj)
+      :n ", '" #'cider-jack-in-clj+)
 
 (defun my-cider-debug-toggle-insert-state ()
   (if cider--debug-mode    ;; Checks if you're entering the debugger
