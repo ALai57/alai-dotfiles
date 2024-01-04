@@ -176,31 +176,6 @@
                         '(("^ *\\([-]\\) "
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-;;(use-package org-bullets
-  ;;:defer t
-  ;;:config
-  ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-;;(let* ((variable-tuple
-        ;;(cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-              ;;((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-              ;;((x-list-fonts "Verdana")         '(:font "Verdana"))
-              ;;((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-              ;;(nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-       ;;(base-font-color     (face-foreground 'default nil 'default))
-       ;;(headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-;;
-  ;;(custom-theme-set-faces
-   ;;'user
-   ;;`(org-level-8 ((t (,@headline ,@variable-tuple))))
-   ;;`(org-level-7 ((t (,@headline ,@variable-tuple))))
-   ;;`(org-level-6 ((t (,@headline ,@variable-tuple))))
-   ;;`(org-level-5 ((t (,@headline ,@variable-tuple))))
-   ;;`(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-   ;;`(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-   ;;`(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-   ;;`(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-   ;;`(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 
 (custom-theme-set-faces
  'user
@@ -217,18 +192,18 @@
  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
 
-'(ediff-current-diff-A ((t (:background "#46382c"))))
-'(ediff-current-diff-B ((t (:background "#343d32"))))
-'(ediff-current-diff-C ((t (:background "#313939"))))
-'(ediff-fine-diff-A ((t (:background "#66584c"))))
-'(ediff-fine-diff-B ((t (:background "#545d52"))))
-'(ediff-fine-diff-C ((t (:background "#515959"))))
-'(ediff-odd-diff-A ((t (:background "#242424"))))
-'(ediff-odd-diff-B ((t (:background "#242424"))))
-'(ediff-odd-diff-C ((t (:background "#242424"))))
-'(ediff-even-diff-A ((t (:background "#242424"))))
-'(ediff-even-diff-B ((t (:background "#242424"))))
-'(ediff-even-diff-C ((t (:background "#242424"))))
+ '(ediff-current-diff-A ((t (:background "#46382c"))))
+ '(ediff-current-diff-B ((t (:background "#343d32"))))
+ '(ediff-current-diff-C ((t (:background "#313939"))))
+ '(ediff-fine-diff-A ((t (:background "#66584c"))))
+ '(ediff-fine-diff-B ((t (:background "#545d52"))))
+ '(ediff-fine-diff-C ((t (:background "#515959"))))
+ '(ediff-odd-diff-A ((t (:background "#242424"))))
+ '(ediff-odd-diff-B ((t (:background "#242424"))))
+ '(ediff-odd-diff-C ((t (:background "#242424"))))
+ '(ediff-even-diff-A ((t (:background "#242424"))))
+ '(ediff-even-diff-B ((t (:background "#242424"))))
+ '(ediff-even-diff-C ((t (:background "#242424"))))
  )
 
 ;;(use-package color :defer t)
@@ -319,7 +294,7 @@
   (interactive "P")
   (setq clojure-indent-style 'always-align))
 
-
+;;(setq before-save-hook nil)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuring CIDER
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -417,10 +392,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customization layers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load! "+bindings")
-(load! "+treemacs")
-;;(load! "lisp/fourclojure")
-
 (setq plantuml-jar-path "~/bin/plantuml-1.2022.8.jar")
 (setq plantuml-default-exec-mode 'jar)
 (setq plantuml-output-type "svg")
@@ -514,7 +485,6 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
           (+go--run-tests (format "-run='%s'" full-name))))
     (error "Must be in a _test.go file")))
 
-
 (setq dap-auto-configure-mode t)
 
 ;; There is something wrong with the current implementation of this macro. Trying to see
@@ -525,6 +495,14 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
   `(when (buffer-live-p (get-buffer buffer))
      (with-current-buffer buffer
        @body)))
+
+;; In addition to fixing imports, goimports also formats your code in the same
+;; style as gofmt so it can be used as a replacement for your editor's
+;; gofmt-on-save hook.
+;; https://pkg.go.dev/golang.org/x/tools/cmd/goimports?utm_source=godoc
+(setq gofmt-command "goimports")
+
+(add-hook 'before-save-hook 'gofmt-before-save)
 
 ;; Debugging workflow:
 ;;
@@ -539,3 +517,16 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 ;;
 ;; Use DAP REPL to inspect variables. Set variable length using `dap-ui-variable-length'
 ;; https://github.com/emacs-lsp/dap-mode/issues/452
+
+(defun +go/run-file ()
+  (interactive)
+  (let ((cmd (concat "go run " buffer-file-name)))
+    (+go--spawn cmd)))
+
+;; +go/test-file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customization layers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(load! "+bindings")
+(load! "+treemacs")
+;;(load! "lisp/fourclojure")

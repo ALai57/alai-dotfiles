@@ -95,7 +95,7 @@
 
 (map! :after clojure-mode
       :map clojure-mode-map
-      :i "<backspace>" #'paredit-backward-delete
+      ;;:i "<backspace>" #'paredit-backward-delete
       :n ", d f" #'cider-debug-defun-at-point
       :n ", e a" #'cider-eval-around-point
       :n ", e b" #'cider-eval-buffer
@@ -232,4 +232,5 @@
       :n ", d i" #'dap-step-in
       :n ", d n" #'dap-next
       :n ", d s q" #'dap-disconnect
+      :n ", '" #'gorepl-run
       )

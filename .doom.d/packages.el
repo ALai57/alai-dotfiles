@@ -29,6 +29,8 @@
 (package! cider-eval-sexp-fu)
 (package! aggressive-indent)
 (package! treemacs-persp)
+(package! prettier)
+(package! consult)
 ;;(package! org-bullets)
 ;;(package! color)
 ;;(package! emacs-bazel-mode :recipe (:host github :repo "bazelbuild/emacs-bazel-mode"))

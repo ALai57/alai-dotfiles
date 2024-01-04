@@ -44,11 +44,16 @@ brew install ripgrep
 # Task
 brew install go-task/tap/go-task
 
-# Go linter
+########################################################################################
+# Go
+#
+# Linter
 # binary will be $(go env GOPATH)/bin/golangci-lint
 curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
 
 golangci-lint --version
+go install golang.org/x/tools/cmd/goimports@latest
+########################################################################################
 
 # NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
@@ -77,3 +82,10 @@ eval "$(direnv hook zsh)"
 ## TODO:
 ## plantuml
 ## visual studio code
+
+
+# For creating GIFs
+brew install ffmpeg
+brew cask install x-quartz #dependency for gifsicle, only required for mountain-lion and above
+open /usr/local/Cellar/x-quartz/2.7.4/XQuartz.pkg # runs the XQuartz installer
+brew install gifsicle
