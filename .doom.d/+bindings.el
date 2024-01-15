@@ -234,3 +234,8 @@
       :n ", d s q" #'dap-disconnect
       :n ", '" #'gorepl-run
       )
+
+(map! :after markdown-mode
+      :map markdown-mode-map
+      :n "RET" #'evil-ret
+      )
