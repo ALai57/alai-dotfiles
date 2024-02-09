@@ -77,6 +77,7 @@
 (map! :n "C--" nil)
 (map! :n "C-=" #'increase-font-size)
 (map! :n "C--" #'decrease-font-size)
+(map! :n ", /" #'ansi-term)
 
 ;;(define-key evil-normal-state-map "C-=" 'increase-font-size t)
 ;;(define-key evil-normal-state-map "C--" 'decrease-font-size t)
