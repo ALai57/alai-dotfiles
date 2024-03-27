@@ -501,7 +501,6 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 ;; gofmt-on-save hook.
 ;; https://pkg.go.dev/golang.org/x/tools/cmd/goimports?utm_source=godoc
 (setq gofmt-command "goimports")
-
 (add-hook 'before-save-hook 'gofmt-before-save)
 
 ;; Debugging workflow:
