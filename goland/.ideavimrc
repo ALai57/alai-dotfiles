@@ -27,6 +27,10 @@ map <leader>ws <Action>(SplitHorizontally)
 map <leader>wv <Action>(SplitVertically)
 map <leader>bd <Action>(CloseActiveTab)
 
+map <leader>wt <Action>(ActivateTerminalToolWindow)
+map <leader>wm <Action>(HideSideWindows)
+map <leader>w` <Action>(SelectInProjectView)
+
 " ` = Terminal
 " :map ` <Action>(ActivateTerminalToolWindow)
 " map <C-t> <Action>(ActivateTerminalToolWindow
