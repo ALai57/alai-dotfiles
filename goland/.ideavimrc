@@ -20,8 +20,12 @@ map <A-`> <Action>(ActivateProjectToolWindow)
 " Project level commands
 map <leader>pf <Action>(GotoFile)
 
+" window switching is a bit of a pain, but most of the time I just have 2 or so splits which makes it unnecessary to
+" map all the window up down left right actions
+" https://stackoverflow.com/questions/32443612/switch-to-split-screen-in-intellij-ideavim
 map <leader>wn <Action>(NextSplitter)
 map <leader>wp <Action>(PrevSplitter)
+
 map <leader>wo <Action>(MaximizeEditorInSplit)
 map <leader>ws <Action>(SplitHorizontally)
 map <leader>wv <Action>(SplitVertically)
