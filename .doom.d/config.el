@@ -498,12 +498,58 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
      (with-current-buffer buffer
        @body)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Autoformatting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;https://emacs.stackexchange.com/a/19582
+(defun my/call-logging-hooks (command &optional verbose)
+  "Call COMMAND, reporting every hook run in the process.
+Interactively, prompt for a command to execute.
+
+Return a list of the hooks run, in the order they were run.
+Interactively, or with optional argument VERBOSE, also print a
+message listing the hooks."
+  (interactive "CCommand to log hooks: \np")
+  (let* ((log     nil)
+         (logger (lambda (&rest hooks)
+                   (setq log (append log hooks nil)))))
+    (my/with-advice
+        ((#'run-hooks :before logger))
+      (call-interactively command))
+    (when verbose
+      (message
+       (if log "Hooks run during execution of %s:"
+         "No hooks run during execution of %s.")
+       command)
+      (dolist (hook log)
+        (message "> %s" hook)))
+    log))
+
+(defmacro my/with-advice (adlist &rest body)
+  "Execute BODY with temporary advice in ADLIST.
+
+Each element of ADLIST should be a list of the form
+  (SYMBOL WHERE FUNCTION [PROPS])
+suitable for passing to `advice-add'.  The BODY is wrapped in an
+`unwind-protect' form, so the advice will be removed even in the
+event of an error or nonlocal exit."
+  (declare (debug ((&rest (&rest form)) body))
+           (indent 1))
+  `(progn
+     ,@(mapcar (lambda (adform)
+                 (cons 'advice-add adform))
+               adlist)
+     (unwind-protect (progn ,@body)
+       ,@(mapcar (lambda (adform)
+                   `(advice-remove ,(car adform) ,(nth 2 adform)))
+                 adlist))))
+
 ;; In addition to fixing imports, goimports also formats your code in the same
 ;; style as gofmt so it can be used as a replacement for your editor's
 ;; gofmt-on-save hook.
 ;; https://pkg.go.dev/golang.org/x/tools/cmd/goimports?utm_source=godoc
 (setq gofmt-command "goimports")
-
 (add-hook 'before-save-hook 'gofmt-before-save)
 ;;(add-hook 'go-mode-hook #lsp)
 
@@ -533,3 +579,43 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 (load! "+bindings")
 (load! "+treemacs")
 ;;(load! "lisp/fourclojure")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tree Sitter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
+;; https://merrick.luois.me/posts/typescript-in-emacs-29
+;; https://vxlabs.com/2022/06/12/typescript-development-with-emacs-tree-sitter-and-lsp-in-2022/
+
+;; Prevent go files from opening in go-ts-mode (tree sitter)
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+
+(after! go-mode
+  (remove-hook 'go-mode-hook #'tree-sitter-mode)
+  (remove-hook 'go-mode-hook #'tree-sitter-hl-mode)
+  (remove-hook 'go-mode-hook #'go-ts-mode))
+
+;;(setq treesit-language-source-alist
+   ;;'((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     ;;(cmake "https://github.com/uyha/tree-sitter-cmake")
+     ;;(css "https://github.com/tree-sitter/tree-sitter-css")
+     ;;(elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     ;;(go "https://github.com/tree-sitter/tree-sitter-go")
+     ;;(html "https://github.com/tree-sitter/tree-sitter-html")
+     ;;(javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     ;;(json "https://github.com/tree-sitter/tree-sitter-json")
+     ;;(make "https://github.com/alemuller/tree-sitter-make")
+     ;;(markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     ;;(python "https://github.com/tree-sitter/tree-sitter-python")
+     ;;(toml "https://github.com/tree-sitter/tree-sitter-toml")
+     ;;(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     ;;(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     ;;(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+;;(use-package typescript-ts-mode
+  ;;:mode (("\\.ts\\'" . typescript-ts-mode)
+         ;;("\\.tsx\\'" . tsx-ts-mode))
+  ;;:config
+  ;;(add-hook! '(typescript-ts-mode-hook tsx-ts-mode-hook) #'lsp!))
+;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))

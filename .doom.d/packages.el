@@ -34,6 +34,15 @@
 ;;(package! org-bullets)
 ;;(package! color)
 ;;(package! emacs-bazel-mode :recipe (:host github :repo "bazelbuild/emacs-bazel-mode"))
+;;(package! typescript-mode :disable t)
+
+;; Example: Uninstalling Tree-sitter packages with use-package
+(use-package tree-sitter
+  :ensure nil)
+
+(use-package tree-sitter-langs
+  :ensure nil)
+
 
 ;; To install a package directly from a particular repo, you'll need to specify
 ;; a `:recipe'. You'll find documentation on what `:recipe' accepts here:
