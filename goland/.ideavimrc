@@ -23,11 +23,6 @@ map tf <Action>(Run)
 """""""""""""""""""""""""""""""""""""
 "map sp <Action>(SearchEverywhere)
 map ss <Action>(Find)
-
-
-map <A-`> <Action>(ActivateProjectToolWindow)
-
-" Project level commands
 map <leader>pf <Action>(GotoFile)
 map <leader>sp <Action>(GotoSymbol)
 
