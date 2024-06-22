@@ -1,17 +1,27 @@
 
+"""""""""""""""""""""""""""""""""""""
 """ Map leader to space ---------------------
+"""""""""""""""""""""""""""""""""""""
 let mapleader = " "
 
-" T prefix = test
-" TT = unit test
+"""""""""""""""""""""""""""""""""""""
+" Code navigation
+"""""""""""""""""""""""""""""""""""""
+map v <Action>(EditorSelectWord)
+
+"""""""""""""""""""""""""""""""""""""
+" Testing
+"""""""""""""""""""""""""""""""""""""
 map tt <Action>(RunClass)
 
 " TF = test file
 map tf <Action>(Run)
 
 
-" S prefix = search
-map sp <Action>(SearchEverywhere)
+"""""""""""""""""""""""""""""""""""""
+" Searching in project
+"""""""""""""""""""""""""""""""""""""
+"map sp <Action>(SearchEverywhere)
 map ss <Action>(Find)
 
 
@@ -19,10 +29,13 @@ map <A-`> <Action>(ActivateProjectToolWindow)
 
 " Project level commands
 map <leader>pf <Action>(GotoFile)
+map <leader>sp <Action>(GotoSymbol)
 
+"""""""""""""""""""""""""""""""""""""
 " window switching is a bit of a pain, but most of the time I just have 2 or so splits which makes it unnecessary to
 " map all the window up down left right actions
 " https://stackoverflow.com/questions/32443612/switch-to-split-screen-in-intellij-ideavim
+"""""""""""""""""""""""""""""""""""""
 map <leader>wn <Action>(NextSplitter)
 map <leader>wp <Action>(PrevSplitter)
 
@@ -39,10 +52,14 @@ map <leader>w` <Action>(SelectInProjectView)
 " :map ` <Action>(ActivateTerminalToolWindow)
 " map <C-t> <Action>(ActivateTerminalToolWindow
 
+"""""""""""""""""""""""""""""""""""""
 " Git commands
+"""""""""""""""""""""""""""""""""""""
 " map <leader>gs <Action>(Git.MainMenu)
 map <leader>gs <Action>(Git.Stage.Compare.Local.Staged)
 
 
-" Map <leader>d to start debug
+"""""""""""""""""""""""""""""""""""""
+" Debugging
+"""""""""""""""""""""""""""""""""""""
 map <leader>d <Action>(Debug)
