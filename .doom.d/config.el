@@ -459,6 +459,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 ;; Go!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'dap-dlv-go)
+(require 'go-mode)
 
 ;; Freshpaint
 (defun destinations-suite? (source-line)
@@ -485,6 +486,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
           (+go--run-tests (format "-run='%s'" full-name))))
     (error "Must be in a _test.go file")))
 
+
 (setq dap-auto-configure-mode t)
 
 ;; There is something wrong with the current implementation of this macro. Trying to see
@@ -503,6 +505,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 (setq gofmt-command "goimports")
 
 (add-hook 'before-save-hook 'gofmt-before-save)
+;;(add-hook 'go-mode-hook #lsp)
 
 ;; Debugging workflow:
 ;;
