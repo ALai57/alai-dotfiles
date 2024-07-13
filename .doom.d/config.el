@@ -459,6 +459,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
 ;; Go!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'dap-dlv-go)
+(require 'go-mode)
 
 ;; Freshpaint
 (defun destinations-suite? (source-line)
@@ -484,6 +485,7 @@ Version: 2021-07-26 2021-08-21 2022-08-05"
                (full-name         (full-test-name source-line current-test-name)))
           (+go--run-tests (format "-run='%s'" full-name))))
     (error "Must be in a _test.go file")))
+
 
 (setq dap-auto-configure-mode t)
 
@@ -549,6 +551,7 @@ event of an error or nonlocal exit."
 ;; https://pkg.go.dev/golang.org/x/tools/cmd/goimports?utm_source=godoc
 (setq gofmt-command "goimports")
 (add-hook 'before-save-hook 'gofmt-before-save)
+;;(add-hook 'go-mode-hook #lsp)
 
 ;; Debugging workflow:
 ;;
