@@ -7,7 +7,12 @@ let mapleader = " "
 """""""""""""""""""""""""""""""""""""
 " Code navigation
 """""""""""""""""""""""""""""""""""""
-map v <Action>(EditorSelectWord)
+"map v <Action>(EditorSelectWord)
+"map v <Action>()
+
+" vnoremap only applies in Visual mode
+" Use Vim commands to select around word
+vnoremap v aw
 
 """""""""""""""""""""""""""""""""""""
 " Testing
@@ -24,7 +29,9 @@ map tf <Action>(Run)
 "map sp <Action>(SearchEverywhere)
 map ss <Action>(Find)
 map <leader>pf <Action>(GotoFile)
-map <leader>sp <Action>(GotoSymbol)
+map <leader>sy <Action>(GotoSymbol)
+map <leader>sc <Action>(GotoClass)
+map <leader>sp <Action>(SearchEverywhere)
 
 """""""""""""""""""""""""""""""""""""
 " window switching is a bit of a pain, but most of the time I just have 2 or so splits which makes it unnecessary to
