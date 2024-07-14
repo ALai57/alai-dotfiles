@@ -7,7 +7,6 @@ let mapleader = " "
 """""""""""""""""""""""""""""""""""""
 " Code navigation
 """""""""""""""""""""""""""""""""""""
-map v <Action>(EditorSelectWord)
 
 """""""""""""""""""""""""""""""""""""
 " Testing
