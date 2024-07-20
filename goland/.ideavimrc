@@ -59,6 +59,8 @@ map <leader>bb <Action>(RecentFiles)
 
 map <leader>wt <Action>(ActivateTerminalToolWindow)
 map <leader>wm <Action>(HideSideWindows)
+" Go into presentation mode/ etc
+map <leader>ww <Action>(ChangeView)
 map <leader>w` <Action>(SelectInProjectView)
 map <leader>ff <Action>(SelectInProjectView)
 
@@ -69,7 +71,9 @@ map <leader>ff <Action>(SelectInProjectView)
 """""""""""""""""""""""""""""""""""""
 " Git commands
 """""""""""""""""""""""""""""""""""""
+map <leader>gs <Action>(ChangesViewPopupMenu)
 map <leader>gs <Action>(ChangesView.ToggleCommitUi)
+map <leader>gc <Action>(ChangesView.Browse)
 
 " Show three-sided diff for single file
 " map <leader>gs <Action>(Git.Stage.Compare.Three.Versions)
@@ -77,6 +81,16 @@ map <leader>gs <Action>(ChangesView.ToggleCommitUi)
 " Show two-sided diff for single file
 " map <leader>gs <Action>(Git.Stage.Compare.Local.Staged)
 
+
+"""""""""""""""""""""""""""""""""""""
+" MultiEditing
+"""""""""""""""""""""""""""""""""""""
+map gk <Action>(EditorCloneCaretAbove)
+map gj <Action>(EditorCloneCaretBelow)
+
+" no Select Previous Occurrence
+map ga <Action>(SelectAllOccurrences)
+map gn <Action>(SelectNextOccurrence)
 
 """""""""""""""""""""""""""""""""""""
 " Debugging
