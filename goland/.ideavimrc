@@ -4,6 +4,11 @@
 """""""""""""""""""""""""""""""""""""
 let mapleader = " "
 
+
+"""""""""""""""""""""""""""""""""""""
+" Editing
+"""""""""""""""""""""""""""""""""""""
+map <C-c><space> <Action>(ReformatCode)
 """""""""""""""""""""""""""""""""""""
 " Code navigation
 """""""""""""""""""""""""""""""""""""
@@ -73,4 +78,34 @@ map <leader>gs <Action>(Git.Stage.Add.All)
 """""""""""""""""""""""""""""""""""""
 " Debugging
 """""""""""""""""""""""""""""""""""""
-map <leader>d <Action>(Debug)
+map <leader>d <Action>(Console.AggregateView.PopupGroup)
+
+" Debugging
+"""""""""""""""""""""""""""""""""""""
+"map <leader>d <Action>(Debug)
+
+"""""""""""""""""""""""""""""""""""""
+" Clojure
+"""""""""""""""""""""""""""""""""""""
+nnoremap <space>kB :action :cursive.actions.paredit/barf-backwards<CR>
+nnoremap <space>kb :action :cursive.actions.paredit/barf-forwards<CR>
+nnoremap <space>kdx :action :cursive.actions.paredit/kill-sexp<CR>
+nnoremap <space>kS :action :cursive.actions.paredit/slurp-backwards<CR>
+nnoremap <space>ks :action :cursive.actions.paredit/slurp-forwards<CR>
+nnoremap <space>ke :action :cursive.actions.paredit/splice-killing-backwards<CR>
+nnoremap <space>kE :action :cursive.actions.paredit/splice-killing-forwards<CR>
+nnoremap <space>mrtf :action :cursive.actions.paredit/thread-form<CR>
+nnoremap <C-c><C-c> :action :cursive.repl.actions/interrupt <CR>
+nnoremap <space>msp :action :cursive.repl.actions/jump-to-output<CR>
+nnoremap <space>mss :action :cursive.repl.actions/jump-to-repl<CR>
+nnoremap ,eb :action :cursive.repl.actions/load-file<CR>
+nnoremap <space>mem :action :cursive.repl.actions/macroexpansion<CR>
+nnoremap <C-<Down>> :action :cursive.repl.actions/next-history-item<CR>
+nnoremap <C-<Up>> :action :cursive.repl.actions/prev-history-item<CR>
+nnoremap ,el :action :cursive.repl.actions/run-last-sexp<CR>
+nnoremap ,ef :action :cursive.repl.actions/run-top-sexp<CR>
+nnoremap <space>msx :action :cursive.repl.actions/sync-files<CR>
+nnoremap <space>mtx :action :cursive.testing.actions/remove-test-markers<CR>
+nnoremap <space>mtr :action :cursive.testing.actions/rerun-last-test <CR>
+nnoremap ,tn :action :cursive.testing.actions/run-ns-tests <CR>
+nnoremap <space>mtt :action :cursive.testing.actions/run-single-test<CR>
