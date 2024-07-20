@@ -1,2 +1,3 @@
 tempfile
 .doom.d/local-packages/*
+.doom.d/custom.el
