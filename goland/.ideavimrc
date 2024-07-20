@@ -69,10 +69,13 @@ map <leader>ff <Action>(SelectInProjectView)
 """""""""""""""""""""""""""""""""""""
 " Git commands
 """""""""""""""""""""""""""""""""""""
-" map <leader>gs <Action>(Git.MainMenu)
-map <leader>gs <Action>(Git.Stage.Compare.Local.Staged)
-map <leader>gs <Action>(Git.Commit.Stage)
-map <leader>gs <Action>(Git.Stage.Add.All)
+map <leader>gs <Action>(ChangesView.ToggleCommitUi)
+
+" Show three-sided diff for single file
+" map <leader>gs <Action>(Git.Stage.Compare.Three.Versions)
+
+" Show two-sided diff for single file
+" map <leader>gs <Action>(Git.Stage.Compare.Local.Staged)
 
 
 """""""""""""""""""""""""""""""""""""
