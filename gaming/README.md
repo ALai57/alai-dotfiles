@@ -18,3 +18,10 @@ ConnectionLatency=0
 ```
 
 https://www.reddit.com/r/linux_gaming/comments/nztt52/comment/hg627qy/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
+https://github.com/atar-axis/xpadneo/issues/295
+
+ERTM
+https://www.addictivetips.com/ubuntu-linux-tips/xbox-one-controllers-over-bluetooth-linux/
+https://gist.github.com/2E0PGS/0166ffec16b1d86acb4ebeea6871b54e
+https://retropie.org.uk/forum/topic/27342/ertm-and-controller-pairing
