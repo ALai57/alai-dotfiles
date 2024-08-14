@@ -1,5 +1,20 @@
 # Gaming
 
+# Install steam
+
+On Ubuntu
+
+```sh
+sudo apt-get install curl
+
+# Download steam deb
+sudo dpkg -i steam_latest.deb
+```
+
+## Bluetooth?
+
+## Controllers
+
 On linux system, may need to install specific drivers for Xbox One version 1914
 
 It does work with Ubuntu 20.04 LTS with LTS Kernel 5.4 and adding the following things to your /etc/bluetooth/main.conf file:
