@@ -26,6 +26,7 @@ map <leader>tt <Action>(RunClass)
 
 " TF = test file
 map <leader>tf <Action>(Run)
+map <leader>tn <Action>(Run)
 
 
 """""""""""""""""""""""""""""""""""""
