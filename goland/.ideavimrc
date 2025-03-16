@@ -106,15 +106,16 @@ map <leader>d <Action>(Console.AggregateView.PopupGroup)
 
 """""""""""""""""""""""""""""""""""""
 " Clojure
+" https://github.com/cursive-ide/cursive/issues/907#issuecomment-309314357
 """""""""""""""""""""""""""""""""""""
 nnoremap <space>kB :action :cursive.actions.paredit/barf-backwards<CR>
 nnoremap <space>kb :action :cursive.actions.paredit/barf-forwards<CR>
 nnoremap <space>kdx :action :cursive.actions.paredit/kill-sexp<CR>
 nnoremap <space>kS :action :cursive.actions.paredit/slurp-backwards<CR>
 nnoremap <space>ks :action :cursive.actions.paredit/slurp-forwards<CR>
-nnoremap <space>ke :action :cursive.actions.paredit/splice-killing-backwards<CR>
-nnoremap <space>kE :action :cursive.actions.paredit/splice-killing-forwards<CR>
-nnoremap <space>mrtf :action :cursive.actions.paredit/thread-form<CR>
+nnoremap <space>kE :action :cursive.actions.paredit/splice-killing-backwards<CR>
+nnoremap <space>ke :action :cursive.actions.paredit/splice-killing-forwards<CR>
+nnoremap ,rtf :action :cursive.actions.paredit/thread-form<CR>
 nnoremap <C-c><C-c> :action :cursive.repl.actions/interrupt <CR>
 nnoremap <space>msp :action :cursive.repl.actions/jump-to-output<CR>
 nnoremap <space>mss :action :cursive.repl.actions/jump-to-repl<CR>
@@ -129,3 +130,10 @@ nnoremap <space>mtx :action :cursive.testing.actions/remove-test-markers<CR>
 nnoremap <space>mtr :action :cursive.testing.actions/rerun-last-test <CR>
 nnoremap ,tn :action :cursive.testing.actions/run-ns-tests <CR>
 nnoremap <space>mtt :action :cursive.testing.actions/run-single-test<CR>
+set ideajoin
+
+"
+" https://github.com/cursive-ide/cursive/wiki/Mapping-IdeaVim-actions-to-Cursive-actions
+map <space>kr :action :cursive.actions.paredit/raise<CR>
+map <space>kw :action :cursive.actions.paredit/wrap-paren<CR>
+map <C-p> "+p
