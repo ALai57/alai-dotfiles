@@ -26,6 +26,7 @@ map <leader>tt <Action>(RunClass)
 
 " TF = test file
 map <leader>tf <Action>(Run)
+map <leader>tn <Action>(Run)
 
 
 """""""""""""""""""""""""""""""""""""
@@ -36,6 +37,8 @@ map <leader>sy <Action>(GotoSymbol)
 map <leader>sc <Action>(GotoClass)
 map <leader>sp <Action>(SearchEverywhere)
 
+" Project commands
+map <leader>pa <Action>(OpenFile)
 map <leader>pp <Action>(RecentProjectListGroup)
 map <leader>pf <Action>(GotoFile)
 
