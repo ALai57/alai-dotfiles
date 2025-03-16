@@ -41,6 +41,7 @@ map <leader>sp <Action>(SearchEverywhere)
 map <leader>pa <Action>(OpenFile)
 map <leader>pp <Action>(RecentProjectListGroup)
 map <leader>pf <Action>(GotoFile)
+map <leader>qq <Action>(Exit)
 
 """""""""""""""""""""""""""""""""""""
 " window switching is a bit of a pain, but most of the time I just have 2 or so splits which makes it unnecessary to
@@ -55,7 +56,9 @@ map <leader>ws <Action>(SplitHorizontally)
 map <leader>wv <Action>(SplitVertically)
 map <leader>wz <Action>(ToggleZenMode)
 
-map <leader>bd <Action>(CloseActiveTab)
+nnoremap <space>bo :action CloseAllEditorsButActive<CR>
+nnoremap <space>bz :action ReopenClosedTab<CR>
+"map <leader>bd <Action>(CloseActiveTab)  "" Doesn't seem to work
 map <leader>bn <Action>(NextTab)
 map <leader>bp <Action>(PreviousTab)
 map <leader>bb <Action>(RecentFiles)
