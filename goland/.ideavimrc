@@ -58,7 +58,7 @@ map <leader>wz <Action>(ToggleZenMode)
 
 nnoremap <space>bo :action CloseAllEditorsButActive<CR>
 nnoremap <space>bz :action ReopenClosedTab<CR>
-"map <leader>bd <Action>(CloseActiveTab)  "" Doesn't seem to work
+map <leader>bd <Action>(CloseEditor)  "" Doesn't seem to work
 map <leader>bn <Action>(NextTab)
 map <leader>bp <Action>(PreviousTab)
 map <leader>bb <Action>(RecentFiles)
