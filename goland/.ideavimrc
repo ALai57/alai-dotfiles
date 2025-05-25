@@ -51,6 +51,16 @@ map <leader>qq <Action>(Exit)
 map <leader>wn <Action>(NextSplitter)
 map <leader>wp <Action>(PrevSplitter)
 
+" https://stackoverflow.com/a/74522168
+sethandler <c-h> a:vim
+sethandler <c-l> a:vim
+sethandler <c-j> a:vim
+sethandler <c-k> a:vim
+nnoremap <leader>wh <c-w>h
+nnoremap <leader>wl <c-w>l
+nnoremap <leader>wj <c-w>j
+nnoremap <leader>wk <c-w>k
+
 map <leader>wo <Action>(MaximizeEditorInSplit)
 map <leader>ws <Action>(SplitHorizontally)
 map <leader>wv <Action>(SplitVertically)
@@ -126,6 +136,7 @@ nnoremap ,eb :action :cursive.repl.actions/load-file<CR>
 nnoremap <space>mem :action :cursive.repl.actions/macroexpansion<CR>
 nnoremap <C-<Down>> :action :cursive.repl.actions/next-history-item<CR>
 nnoremap <C-<Up>> :action :cursive.repl.actions/prev-history-item<CR>
+nnoremap ,el :action :cursive.repl.actions/run-last-sexp<CR>
 nnoremap ,el :action :cursive.repl.actions/run-last-sexp<CR>
 nnoremap ,ef :action :cursive.repl.actions/run-top-sexp<CR>
 nnoremap <space>msx :action :cursive.repl.actions/sync-files<CR>

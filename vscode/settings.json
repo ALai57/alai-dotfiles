@@ -1,4 +1,5 @@
 {
+    "zenMode.hideLineNumbers": false,
     "vim.foldfix": true,
     "vim.easymotion": true,
     "vim.useSystemClipboard": true,
@@ -55,7 +56,7 @@
                 "key": "t",
                 "name": "Test",
                 "type": "command",
-                "command": "better-phpunit.run",
+                "command": "better-phpunit.run"
                 //"command": "phpunit.TestNearest",
             }]
         }
