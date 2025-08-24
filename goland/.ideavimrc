@@ -20,6 +20,12 @@ map <C-c><space> <Action>(ReformatCode)
 vnoremap v aw
 
 """""""""""""""""""""""""""""""""""""
+" Code folding
+"""""""""""""""""""""""""""""""""""""
+"map zc :action CollapseAllRegions
+"map zo :action ExpandAllRegions
+
+"""""""""""""""""""""""""""""""""""""
 " Testing
 """""""""""""""""""""""""""""""""""""
 map <leader>tt <Action>(RunClass)
@@ -75,6 +81,8 @@ map <leader>bb <Action>(RecentFiles)
 
 map <leader>wt <Action>(ActivateTerminalToolWindow)
 map <leader>wm <Action>(HideSideWindows)
+map <leader>wq :action CloseEditorsGroup<CR>
+" map <leader>wq <Action>(CloseAllTabsInWindow)
 " Go into presentation mode/ etc
 map <leader>ww <Action>(ChangeView)
 map <leader>w` <Action>(SelectInProjectView)
@@ -136,7 +144,6 @@ nnoremap ,eb :action :cursive.repl.actions/load-file<CR>
 nnoremap <space>mem :action :cursive.repl.actions/macroexpansion<CR>
 nnoremap <C-<Down>> :action :cursive.repl.actions/next-history-item<CR>
 nnoremap <C-<Up>> :action :cursive.repl.actions/prev-history-item<CR>
-nnoremap ,el :action :cursive.repl.actions/run-last-sexp<CR>
 nnoremap ,el :action :cursive.repl.actions/run-last-sexp<CR>
 nnoremap ,ef :action :cursive.repl.actions/run-top-sexp<CR>
 nnoremap <space>msx :action :cursive.repl.actions/sync-files<CR>
